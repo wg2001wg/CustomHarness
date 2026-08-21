@@ -35,11 +35,6 @@ public partial class SettingsViewModel : ObservableObject
     [ObservableProperty]
     private ProviderItemViewModel? _selectedProvider;
 
-    [ObservableProperty]
-    private string _apiKey = "";
-
-    public string ApiKeyPlaceholder => "已配置(环境变量)";
-
     // ---- 预设厂商添加 ----
     /// <summary>预设厂商选项(首项为"自定义",与手动添加流程区分)。</summary>
     public ObservableCollection<KnownProviderOption> KnownProviderOptions { get; } = new();
@@ -116,8 +111,6 @@ public partial class SettingsViewModel : ObservableObject
             Providers.Add(vm);
             if (p.Id == _engine.Settings.ProviderId) SelectedProvider = vm;
         }
-        ApiKey = _engine.Settings.Providers
-            .FirstOrDefault(p => p.Id == _engine.Settings.ProviderId)?.ApiKey ?? "";
 
         // Presets
         Presets.Clear();
@@ -173,12 +166,6 @@ public partial class SettingsViewModel : ObservableObject
         }
 
         Workspace = _engine.Settings.Workspace;
-    }
-
-    partial void OnSelectedProviderChanged(ProviderItemViewModel? value)
-    {
-        if (value != null)
-            ApiKey = value.Config.ApiKey ?? "";
     }
 
     // ---- 自定义提供商:添加 / 删除 ----
@@ -247,8 +234,15 @@ public partial class SettingsViewModel : ObservableObject
         if (SelectedProvider != null)
         {
             s.ProviderId = SelectedProvider.Config.Id;
-            var cfg = s.Providers.First(p => p.Id == SelectedProvider.Config.Id);
-            cfg.ApiKey = string.IsNullOrWhiteSpace(ApiKey) ? null : ApiKey.Trim();
+        }
+        // 每个厂商的 API Key 独立写回各自配置,互不覆盖
+        foreach (var vm in Providers)
+        {
+            var cfg = s.Providers.FirstOrDefault(p => p.Id == vm.Config.Id);
+            if (cfg != null)
+            {
+                cfg.ApiKey = string.IsNullOrWhiteSpace(vm.ApiKey) ? null : vm.ApiKey.Trim();
+            }
         }
         if (SelectedPreset != null)
             s.AgentPreset = SelectedPreset.Name;
@@ -300,6 +294,10 @@ public partial class ProviderItemViewModel : ObservableObject
     [ObservableProperty]
     private bool _newModelThinking = true;
 
+    /// <summary>当前厂商独立保存的 API Key(UI 编辑缓冲,保存时写回 Config)。</summary>
+    [ObservableProperty]
+    private string _apiKey;
+
     public string Name => Config.Name;
     public string Id => Config.Id;
     public string BaseUrl => Config.BaseUrl;
@@ -310,6 +308,13 @@ public partial class ProviderItemViewModel : ObservableObject
         Config = config;
         Models = new ObservableCollection<AppSettings.ModelConfig>(config.Models);
         SelectedModel = config.Models.FirstOrDefault(m => m.Default) ?? config.Models.FirstOrDefault();
+        _apiKey = config.ApiKey ?? "";
+    }
+
+    /// <summary>把 UI 中编辑的 API Key 写回所属配置(每个厂商独立)。</summary>
+    public void CommitApiKey()
+    {
+        Config.ApiKey = string.IsNullOrWhiteSpace(ApiKey) ? null : ApiKey.Trim();
     }
 
     /// <summary>添加自定义模型到当前提供商。</summary>

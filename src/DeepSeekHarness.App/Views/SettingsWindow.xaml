@@ -61,10 +61,10 @@
                                     </Grid>
 
                                     <TextBlock Text="API Key" FontSize="11.5" Foreground="{StaticResource TextSecondary}" Margin="0,10,0,4" />
-                                    <TextBox Text="{Binding DataContext.ApiKey, RelativeSource={RelativeSource AncestorType=Window}, UpdateSourceTrigger=PropertyChanged}"
+                                    <TextBox Text="{Binding ApiKey, UpdateSourceTrigger=PropertyChanged}"
                                              Width="340" HorizontalAlignment="Left"
                                              FontSize="13" BorderBrush="{StaticResource BorderColor}" Padding="8,5" />
-                                    <TextBlock Text="留空则使用环境变量(如 DEEPSEEK_API_KEY)" FontSize="10.5"
+                                    <TextBlock Text="各厂商独立保存,留空则使用环境变量" FontSize="10.5"
                                                Foreground="{StaticResource TextTertiary}" Margin="0,4,0,10" />
 
                                     <!-- 模型列表 -->
