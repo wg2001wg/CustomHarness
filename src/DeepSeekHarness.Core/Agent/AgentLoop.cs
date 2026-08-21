@@ -173,15 +173,16 @@ public sealed class AgentLoop
         }
         catch (LlmException ex)
         {
+            var friendly = LlmException.FriendlyMessage(ex.ErrorCode, ex.Message);
             var err = new Message
             {
                 Role = MessageRole.Assistant,
                 Source = MessageSource.Model,
-                Blocks = { new ContentBlock { Type = ContentBlockType.Text, Text = $"⚠️ LLM 错误 [{ex.ErrorCode}]: {ex.Message}" } },
+                Blocks = { new ContentBlock { Type = ContentBlockType.Text, Text = $"⚠️ 模型调用出错:{friendly}" } },
             };
             _session.Append(SessionEventType.AssistantMessage, err);
             SessionEvent?.Invoke(SessionEventType.AssistantMessage, err);
-            _session.Append(SessionEventType.Error, new { code = ex.ErrorCode, message = ex.Message });
+            _session.Append(SessionEventType.Error, new { code = ex.ErrorCode, message = friendly });
             AssistantMessageCompleted?.Invoke(err); // 通知 UI 展示错误消息
             SetState(AgentLoopState.Error);
             TurnEnded?.Invoke(TurnEndReason.Error);

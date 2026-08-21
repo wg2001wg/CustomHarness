@@ -18,17 +18,21 @@ public sealed class DeepSeekAdapter : ILlmAdapter
 
     private readonly HttpClient _http;
     private readonly Func<string?> _apiKeyResolver;
+    private readonly Func<string?> _baseUrlResolver;
 
     public string ProviderName => "deepseek-official";
 
-    public DeepSeekAdapter(HttpClient http, Func<string?> apiKeyResolver)
+    public DeepSeekAdapter(HttpClient http, Func<string?> apiKeyResolver, Func<string?>? baseUrlResolver = null)
     {
         _http = http;
         _apiKeyResolver = apiKeyResolver;
+        _baseUrlResolver = baseUrlResolver ?? (() => DefaultEndpoint);
     }
 
     public bool CanHandle(string provider)
-        => provider is "deepseek-official" or "deepseek" or "dsh-deepseek";
+        => provider is "deepseek-official" or "deepseek" or "dsh-deepseek" or "openai" or "anthropic"
+            or "google" or "qwen" or "moonshot" or "zhipu" or "doubao" or "baidu" or "mistral"
+            or "xai" or "groq" or "cohere" or "ollama" or "lmstudio" or "vllm" or "openrouter";
 
     public async IAsyncEnumerable<StreamChunk> StreamAsync(
         GenerateOptions options,
@@ -41,7 +45,8 @@ public sealed class DeepSeekAdapter : ILlmAdapter
                 "未配置 DeepSeek API Key。请在设置中填写(环境变量 DEEPSEEK_API_KEY 或应用设置)。");
 
         var payload = BuildPayload(options);
-        var request = new HttpRequestMessage(HttpMethod.Post, Endpoint(options.Provider) + "/chat/completions")
+        var baseUrl = ResolveBaseUrl(options);
+        var request = new HttpRequestMessage(HttpMethod.Post, baseUrl + "/chat/completions")
         {
             Content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json"),
         };
@@ -53,8 +58,9 @@ public sealed class DeepSeekAdapter : ILlmAdapter
         if (!response.IsSuccessStatusCode)
         {
             var errBody = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
-            throw new LlmException(options.Provider, options.Model, $"HTTP_{((int)response.StatusCode)}",
-                $"LLM 请求失败 ({response.StatusCode}): {Truncate(errBody, 300)}");
+            var (errCode, errMessage) = ParseError((int)response.StatusCode, errBody);
+            var friendly = LlmException.FriendlyMessage(errCode, errMessage);
+            throw new LlmException(options.Provider, options.Model, errCode, friendly);
         }
 
         await using var stream = await response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false);
@@ -243,11 +249,54 @@ public sealed class DeepSeekAdapter : ILlmAdapter
         return cur.ValueKind == JsonValueKind.Number ? cur.GetInt32() : null;
     }
 
-    private static string Endpoint(string provider) => provider switch
+    /// <summary>解析当前 provider 的基地址:优先实例级 resolver(由工厂按 provider 配置注入)。</summary>
+    private string ResolveBaseUrl(GenerateOptions options)
     {
-        "deepseek" or "deepseek-official" => Environment.GetEnvironmentVariable("DEEPSEEK_API_BASE") ?? DefaultEndpoint,
-        _ => DefaultEndpoint,
-    };
+        // 自定义 provider 通过实例 resolver 提供其 BaseUrl
+        var custom = _baseUrlResolver();
+        if (!string.IsNullOrWhiteSpace(custom)) return custom.TrimEnd('/');
+
+        // DeepSeek 官方支持环境变量覆盖(向后兼容)
+        var env = Environment.GetEnvironmentVariable("DEEPSEEK_API_BASE");
+        if (!string.IsNullOrWhiteSpace(env)) return env.TrimEnd('/');
+
+        return DefaultEndpoint;
+    }
+
+    /// <summary>解析 HTTP 错误响应,提取稳定的错误码与可读的底层信息(供 FriendlyMessage 使用)。</summary>
+    private static (string Code, string Message) ParseError(int status, string body)
+    {
+        var code = $"HTTP_{status}";
+        var message = Truncate(body, 500);
+        try
+        {
+            using var doc = JsonDocument.Parse(body);
+            var root = doc.RootElement;
+            // OpenAI 兼容: { "error": { "message", "type", "code", "param" } }
+            if (root.TryGetProperty("error", out var err))
+            {
+                if (err.TryGetProperty("message", out var m) && m.ValueKind == JsonValueKind.String)
+                    message = Truncate(m.GetString() ?? message, 500);
+                if (err.TryGetProperty("code", out var c) && c.ValueKind == JsonValueKind.String)
+                {
+                    var apiCode = c.GetString();
+                    if (!string.IsNullOrWhiteSpace(apiCode))
+                        code = apiCode.ToUpperInvariant().Replace(' ', '_').Replace("-", "_");
+                }
+                else if (err.TryGetProperty("type", out var t) && t.ValueKind == JsonValueKind.String)
+                {
+                    var type = t.GetString();
+                    if (!string.IsNullOrWhiteSpace(type))
+                        code = type.ToUpperInvariant().Replace(' ', '_').Replace("-", "_");
+                }
+            }
+        }
+        catch
+        {
+            // 非 JSON 响应体,保留原始内容
+        }
+        return (code, message);
+    }
 
     private static string Truncate(string s, int max)
         => s.Length <= max ? s : s[..max] + "...";

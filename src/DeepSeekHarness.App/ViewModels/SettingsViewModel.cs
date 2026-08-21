@@ -40,6 +40,13 @@ public partial class SettingsViewModel : ObservableObject
 
     public string ApiKeyPlaceholder => "已配置(环境变量)";
 
+    // ---- 预设厂商添加 ----
+    /// <summary>预设厂商选项(首项为"自定义",与手动添加流程区分)。</summary>
+    public ObservableCollection<KnownProviderOption> KnownProviderOptions { get; } = new();
+
+    [ObservableProperty]
+    private KnownProviderOption? _selectedKnownProvider;
+
     // ---- 自定义提供商输入 ----
     [ObservableProperty]
     private string _newProviderName = "";
@@ -92,6 +99,15 @@ public partial class SettingsViewModel : ObservableObject
 
     public void Load()
     {
+        // 预设厂商选项(含"自定义"首项)
+        KnownProviderOptions.Clear();
+        KnownProviderOptions.Add(new KnownProviderOption { Id = null, Name = "— 自定义提供商(手动填写) —" });
+        foreach (var t in KnownProviders.All)
+        {
+            KnownProviderOptions.Add(new KnownProviderOption { Id = t.Id, Name = $"{t.Name} ({t.BaseUrl})" });
+        }
+        SelectedKnownProvider = KnownProviderOptions.FirstOrDefault();
+
         // Models
         Providers.Clear();
         foreach (var p in _engine.Settings.Providers)
@@ -198,6 +214,21 @@ public partial class SettingsViewModel : ObservableObject
         NewProviderApiKey = "";
     }
 
+    /// <summary>从预设厂商目录一键添加提供商(含 BaseUrl 与常见模型列表)。</summary>
+    [RelayCommand]
+    private void AddKnownProvider()
+    {
+        if (SelectedKnownProvider == null || string.IsNullOrEmpty(SelectedKnownProvider.Id)) return;
+        var template = KnownProviders.Find(SelectedKnownProvider.Id);
+        if (template == null) return;
+        if (_engine.Settings.Providers.Any(p => p.Id == template.Id)) return; // 防重复
+
+        var cfg = KnownProviders.ToConfig(template);
+        _engine.Settings.Providers.Add(cfg);
+        Providers.Add(new ProviderItemViewModel(cfg));
+        SelectedProvider = Providers[^1];
+    }
+
     /// <summary>删除自定义提供商(至少保留一个)。</summary>
     [RelayCommand]
     private void RemoveProvider(ProviderItemViewModel? provider)
@@ -240,6 +271,13 @@ public partial class SettingsViewModel : ObservableObject
         s.Save();
         SettingsApplied?.Invoke();
     }
+}
+
+/// <summary>预设厂商下拉选项(null Id 表示"自定义")。</summary>
+public sealed class KnownProviderOption
+{
+    public string? Id { get; init; }
+    public string Name { get; init; } = "";
 }
 
 public partial class ProviderItemViewModel : ObservableObject

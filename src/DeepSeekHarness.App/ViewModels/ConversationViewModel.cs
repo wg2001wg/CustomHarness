@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using DeepSeekHarness.Core;
 using DeepSeekHarness.Core.Agent;
 using DeepSeekHarness.Core.Config;
+using DeepSeekHarness.Core.LLM;
 using DeepSeekHarness.Core.Session;
 
 namespace DeepSeekHarness.App.ViewModels;
@@ -17,6 +18,15 @@ public partial class ConversationViewModel : ObservableObject
     private readonly Dispatcher _dispatcher;
     private ChatItemViewModel? _streamingItem;
     private ToolCallItemViewModel? _pendingToolCall;
+
+    // 已订阅的 Agent 事件处理器(用于切换会话/重订阅时先解绑,避免重复触发导致错误消息多次显示)
+    private AgentLoop? _subscribedAgent;
+    private Action<AgentLoopState>? _stateChangedHandler;
+    private Action<string>? _streamDeltaHandler;
+    private Action<string>? _reasoningDeltaHandler;
+    private Action<Message>? _assistantMessageCompletedHandler;
+    private Action<string, string, string, object?>? _toolEventHandler;
+    private Action<TurnEndReason>? _turnEndedHandler;
 
     public ObservableCollection<ChatItemViewModel> Items { get; } = new();
 
@@ -94,7 +104,12 @@ public partial class ConversationViewModel : ObservableObject
         var agent = _engine.Agent;
         if (agent == null) return;
 
-        agent.StateChanged += s => _dispatcher.BeginInvoke(() =>
+        // 幂等:同 agent 不重复订阅;切换 agent 时先解绑旧订阅,避免每次 Send 错误消息被多次显示
+        if (ReferenceEquals(_subscribedAgent, agent))
+            return;
+        UnsubscribeAgent();
+
+        _stateChangedHandler = s => _dispatcher.BeginInvoke(() =>
         {
             IsRunning = s == AgentLoopState.Running;
             CanSend = s != AgentLoopState.Running;
@@ -107,7 +122,7 @@ public partial class ConversationViewModel : ObservableObject
             };
         });
 
-        agent.StreamDelta += d => _dispatcher.BeginInvoke(() =>
+        _streamDeltaHandler = d => _dispatcher.BeginInvoke(() =>
         {
             EnsureStreamingItem();
             if (_streamingItem != null)
@@ -115,24 +130,24 @@ public partial class ConversationViewModel : ObservableObject
             NotifyScroll();
         });
 
-        agent.ReasoningDelta += d => _dispatcher.BeginInvoke(() =>
+        _reasoningDeltaHandler = d => _dispatcher.BeginInvoke(() =>
         {
             EnsureStreamingItem();
             if (_streamingItem != null)
                 _streamingItem.Reasoning += d;
         });
 
-        agent.AssistantMessageCompleted += msg => _dispatcher.BeginInvoke(() =>
+        _assistantMessageCompletedHandler = msg => _dispatcher.BeginInvoke(() =>
         {
             FinalizeStreamingItem(msg);
         });
 
-        agent.ToolEvent += (callId, name, phase, payload) => _dispatcher.BeginInvoke(() =>
+        _toolEventHandler = (callId, name, phase, payload) => _dispatcher.BeginInvoke(() =>
         {
             HandleToolEvent(callId, name, phase, payload);
         });
 
-        agent.TurnEnded += reason => _dispatcher.BeginInvoke(() =>
+        _turnEndedHandler = reason => _dispatcher.BeginInvoke(() =>
         {
             _streamingItem = null;
             _pendingToolCall = null;
@@ -149,6 +164,26 @@ public partial class ConversationViewModel : ObservableObject
             _engine.SaveCurrentSession();
             SessionTitle = _engine.CurrentSession?.Header.Title ?? SessionTitle;
         });
+
+        agent.StateChanged += _stateChangedHandler;
+        agent.StreamDelta += _streamDeltaHandler;
+        agent.ReasoningDelta += _reasoningDeltaHandler;
+        agent.AssistantMessageCompleted += _assistantMessageCompletedHandler;
+        agent.ToolEvent += _toolEventHandler;
+        agent.TurnEnded += _turnEndedHandler;
+        _subscribedAgent = agent;
+    }
+
+    private void UnsubscribeAgent()
+    {
+        if (_subscribedAgent == null) return;
+        if (_stateChangedHandler != null) _subscribedAgent.StateChanged -= _stateChangedHandler;
+        if (_streamDeltaHandler != null) _subscribedAgent.StreamDelta -= _streamDeltaHandler;
+        if (_reasoningDeltaHandler != null) _subscribedAgent.ReasoningDelta -= _reasoningDeltaHandler;
+        if (_assistantMessageCompletedHandler != null) _subscribedAgent.AssistantMessageCompleted -= _assistantMessageCompletedHandler;
+        if (_toolEventHandler != null) _subscribedAgent.ToolEvent -= _toolEventHandler;
+        if (_turnEndedHandler != null) _subscribedAgent.TurnEnded -= _turnEndedHandler;
+        _subscribedAgent = null;
     }
 
     private void EnsureStreamingItem()
@@ -312,7 +347,7 @@ public partial class ConversationViewModel : ObservableObject
         catch (Exception ex)
         {
             // 任何运行异常以系统消息呈现,保持 UI 可用
-            AddSystemMessage($"❌ 发送失败: {ex.Message}");
+            AddSystemMessage(BuildSendFailureMessage(ex));
         }
         finally
         {
@@ -322,6 +357,24 @@ public partial class ConversationViewModel : ObservableObject
 
     [RelayCommand]
     private void Interrupt() => _engine.Agent?.Interrupt();
+
+    /// <summary>把发送过程中的异常转换成对用户友好的提示文案。</summary>
+    private static string BuildSendFailureMessage(Exception ex)
+    {
+        // 运行中重复发送:给明确指引而非裸异常
+        if (ex is InvalidOperationException)
+            return $"⚠️ 无法发送:{ex.Message}";
+
+        // LLM 层错误:使用统一友好映射
+        if (ex is LlmException llm)
+            return $"❌ 发送失败:{LlmException.FriendlyMessage(llm.ErrorCode, llm.Message)}";
+
+        // 其他异常:截断原始信息,避免技术噪音
+        var msg = ex.Message?.Trim() ?? "";
+        if (string.IsNullOrEmpty(msg)) return "❌ 发送失败,请稍后重试。";
+        if (msg.Length > 200) msg = msg[..200] + "...";
+        return $"❌ 发送失败:{msg}";
+    }
 
     /// <summary>追加一条系统提示消息(用于错误/状态反馈)。</summary>
     public void AddSystemMessage(string text)
