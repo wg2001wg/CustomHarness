@@ -43,6 +43,9 @@ public sealed class PresetLoader
         _dataRoot = dataRoot;
     }
 
+    /// <summary>数据根目录(供插件目录等其它加载器复用)。</summary>
+    public string DataRoot => _dataRoot;
+
     public static PresetLoader FromAppDir()
     {
         // 优先使用环境变量 DSH_DATA,否则在可执行目录/项目目录下寻找 data/
@@ -53,7 +56,7 @@ public sealed class PresetLoader
         {
             Path.Combine(AppContext.BaseDirectory, "data"),
             Path.Combine(Directory.GetCurrentDirectory(), "data"),
-            Path.Combine(FindRepoRoot(), "data"),
+            FindRepoRoot() is { } repoRoot ? Path.Combine(repoRoot, "data") : "",
         };
         foreach (var c in candidates)
         {

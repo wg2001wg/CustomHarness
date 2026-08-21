@@ -29,32 +29,163 @@
             <!-- ===== Models ===== -->
             <StackPanel x:Name="ModelsPanel" Visibility="{Binding SelectedTab, Converter={StaticResource TabIsModelsConv}, ConverterParameter=Models}">
                 <TextBlock Text="模型提供商" FontSize="18" FontWeight="Bold" Foreground="{StaticResource TextPrimary}" />
-                <TextBlock Text="配置 LLM 提供商与 API Key。Key 仅保存在本地。"
+                <TextBlock Text="配置 LLM 提供商、自定义模型与 API Key。Key 仅保存在本地。"
                            FontSize="12" Foreground="{StaticResource TextSecondary}" Margin="0,4,0,16" />
 
                 <ItemsControl ItemsSource="{Binding Providers}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Border Background="{StaticResource BgLayer1}" CornerRadius="10" Padding="14" Margin="0,0,0,10"
+                            <Border Background="{StaticResource BgLayer1}" CornerRadius="10" Padding="14" Margin="0,0,0,12"
                                     BorderBrush="{StaticResource BorderColor}" BorderThickness="1">
                                 <StackPanel>
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="14"
-                                                   Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center" />
-                                        <TextBlock Text="{Binding Id}" FontSize="11" Foreground="{StaticResource TextTertiary}"
-                                                   Margin="10,0,0,0" VerticalAlignment="Center" />
-                                    </StackPanel>
+                                    <!-- 提供商头部 + 删除 -->
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="14"
+                                                       Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center" />
+                                            <TextBlock Text="{Binding Id}" FontSize="11" Foreground="{StaticResource TextTertiary}"
+                                                       Margin="10,0,0,0" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="1" Text="{Binding BaseUrl}" FontSize="10.5"
+                                                   Foreground="{StaticResource TextTertiary}" Margin="12,0,0,0"
+                                                   VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                                        <Button Grid.Column="2" Content="删除提供商" Style="{StaticResource GhostButton}"
+                                                FontSize="11" Padding="10,4"
+                                                Command="{Binding DataContext.RemoveProviderCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                CommandParameter="{Binding}" />
+                                    </Grid>
+
                                     <TextBlock Text="API Key" FontSize="11.5" Foreground="{StaticResource TextSecondary}" Margin="0,10,0,4" />
                                     <TextBox Text="{Binding DataContext.ApiKey, RelativeSource={RelativeSource AncestorType=Window}, UpdateSourceTrigger=PropertyChanged}"
                                              Width="340" HorizontalAlignment="Left"
                                              FontSize="13" BorderBrush="{StaticResource BorderColor}" Padding="8,5" />
-                                    <TextBlock Text="留空则使用环境变量 DEEPSEEK_API_KEY" FontSize="10.5"
-                                               Foreground="{StaticResource TextTertiary}" Margin="0,4,0,0" />
+                                    <TextBlock Text="留空则使用环境变量(如 DEEPSEEK_API_KEY)" FontSize="10.5"
+                                               Foreground="{StaticResource TextTertiary}" Margin="0,4,0,10" />
+
+                                    <!-- 模型列表 -->
+                                    <TextBlock Text="模型" FontSize="11.5" FontWeight="SemiBold"
+                                               Foreground="{StaticResource TextSecondary}" Margin="0,4,0,6" />
+                                    <ItemsControl ItemsSource="{Binding Models}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Background="{StaticResource BgLayer3}" CornerRadius="6"
+                                                        Padding="10,6" Margin="0,0,0,4">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="Auto" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{Binding Id}" FontSize="12.5" FontWeight="SemiBold"
+                                                                       Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center" />
+                                                            <TextBlock Text="{Binding Name}" FontSize="11"
+                                                                       Foreground="{StaticResource TextSecondary}"
+                                                                       Margin="10,0,0,0" VerticalAlignment="Center" />
+                                                            <Border Background="#E8F0FE" CornerRadius="4" Padding="6,1" Margin="10,0,0,0"
+                                                                    Visibility="{Binding Thinking, Converter={StaticResource BoolVisConv}}">
+                                                                <TextBlock Text="thinking" FontSize="9.5" Foreground="#1A73E8" />
+                                                            </Border>
+                                                        </StackPanel>
+                                                        <Button Grid.Column="1" Content="✕" FontSize="10" Padding="8,2"
+                                                                Background="Transparent" BorderThickness="0"
+                                                                Foreground="{StaticResource TextTertiary}"
+                                                                Command="{Binding DataContext.RemoveModelCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                CommandParameter="{Binding}" ToolTip="删除该模型" />
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <!-- 添加模型 -->
+                                    <Grid Margin="0,8,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="170" />
+                                            <ColumnDefinition Width="170" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="模型 ID（必填）" FontSize="10.5" Foreground="{StaticResource TextSecondary}" Margin="0,0,0,3" />
+                                            <TextBox Text="{Binding NewModelId, UpdateSourceTrigger=PropertyChanged}"
+                                                     FontSize="12" Style="{StaticResource InputBox}"
+                                                     ToolTip="模型 ID,如 deepseek-chat / gpt-4o" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                                            <TextBlock Text="显示名称（可选）" FontSize="10.5" Foreground="{StaticResource TextSecondary}" Margin="0,0,0,3" />
+                                            <TextBox Text="{Binding NewModelName, UpdateSourceTrigger=PropertyChanged}"
+                                                     FontSize="12" Style="{StaticResource InputBox}"
+                                                     ToolTip="列表中的显示名称,如 我的模型" />
+                                        </StackPanel>
+                                        <CheckBox Grid.Column="2" Content="支持思考" IsChecked="{Binding NewModelThinking}"
+                                                  VerticalAlignment="Bottom" Margin="12,0,0,6" FontSize="11"
+                                                  Foreground="{StaticResource TextSecondary}"
+                                                  ToolTip="勾选表示该模型支持 reasoning(思考)输出" />
+                                        <Button Grid.Column="3" Content="添加模型" Style="{StaticResource PrimaryButton}" FontSize="11"
+                                                Padding="12,5" Margin="12,0,0,0" VerticalAlignment="Bottom"
+                                                Command="{Binding AddModelCommand}" />
+                                    </Grid>
                                 </StackPanel>
                             </Border>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
+
+                <!-- 添加提供商 -->
+                <Border Background="{StaticResource BgLayer1}" CornerRadius="10" Padding="14" Margin="0,4,0,0"
+                        BorderBrush="{StaticResource BorderColor}" BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock Text="＋ 添加自定义提供商（OpenAI 兼容端点）" FontSize="12.5" FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextPrimary}" Margin="0,0,0,10" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="提供商名称（必填）" FontSize="10.5" Foreground="{StaticResource TextSecondary}" Margin="0,0,0,3" />
+                                <TextBox Text="{Binding NewProviderName, UpdateSourceTrigger=PropertyChanged}"
+                                         FontSize="12" Style="{StaticResource InputBox}"
+                                         ToolTip="显示名称,如 我的中转站" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                                <TextBlock Text="唯一 ID（必填）" FontSize="10.5" Foreground="{StaticResource TextSecondary}" Margin="0,0,0,3" />
+                                <TextBox Text="{Binding NewProviderId, UpdateSourceTrigger=PropertyChanged}"
+                                         FontSize="12" Style="{StaticResource InputBox}"
+                                         ToolTip="内部标识,如 my-openai,不能与现有重复" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" Margin="8,0,0,0">
+                                <TextBlock Text="API 端点（留空 = DeepSeek 官方）" FontSize="10.5" Foreground="{StaticResource TextSecondary}" Margin="0,0,0,3" />
+                                <TextBox Text="{Binding NewProviderBaseUrl, UpdateSourceTrigger=PropertyChanged}"
+                                         FontSize="12" Style="{StaticResource InputBox}"
+                                         ToolTip="OpenAI 兼容基地址,如 https://api.openai.com/v1" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="3" Margin="8,0,0,0">
+                                <TextBlock Text="API Key（留空 = 环境变量）" FontSize="10.5" Foreground="{StaticResource TextSecondary}" Margin="0,0,0,3" />
+                                <TextBox Text="{Binding NewProviderApiKey, UpdateSourceTrigger=PropertyChanged}"
+                                         FontSize="12" Style="{StaticResource InputBox}"
+                                         ToolTip="该提供商的密钥,仅保存在本地 settings.json" />
+                            </StackPanel>
+                            <Button Grid.Column="4" Content="添加" Style="{StaticResource PrimaryButton}" FontSize="11"
+                                    Padding="16,6" Margin="12,17,0,0" VerticalAlignment="Bottom"
+                                    Command="{Binding AddProviderCommand}" />
+                        </Grid>
+                        <TextBlock Text="提示：自定义端点需兼容 /v1/chat/completions（SSE 流式 + 工具调用）。"
+                                   FontSize="10.5" Foreground="{StaticResource TextTertiary}" Margin="0,8,0,0" />
+                    </StackPanel>
+                </Border>
             </StackPanel>
 
             <!-- ===== Presets ===== -->
@@ -86,9 +217,9 @@
 
             <!-- ===== Plugins ===== -->
             <StackPanel x:Name="PluginsPanel" Visibility="{Binding SelectedTab, Converter={StaticResource TabIsPluginsConv}, ConverterParameter=Plugins}">
-                <TextBlock Text="已加载插件(工具)" FontSize="18" FontWeight="Bold" Foreground="{StaticResource TextPrimary}" />
-                <TextBlock Text="一切皆插件 —— 当前会话可用的工具集(由预设组合决定)。"
-                           FontSize="12" Foreground="{StaticResource TextSecondary}" Margin="0,4,0,16" />
+                <TextBlock Text="已加载插件(当前预设组合行)" FontSize="18" FontWeight="Bold" Foreground="{StaticResource TextPrimary}" />
+                <TextBlock Text="同步自上游 deepseek-harness(226 个插件包)。已实现 = 有 C# 能力;框架级 = 由系统提示/循环处理;待实现 = 上游存在,本项目未移植。"
+                           FontSize="12" Foreground="{StaticResource TextSecondary}" Margin="0,4,0,16" TextWrapping="Wrap" />
                 <ItemsControl ItemsSource="{Binding Plugins}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
@@ -98,13 +229,22 @@
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <Ellipse Width="8" Height="8" Fill="{StaticResource SuccessGreen}" Margin="0,0,12,0"
-                                             VerticalAlignment="Center" />
+                                             VerticalAlignment="Center"
+                                             Visibility="{Binding Enabled, Converter={StaticResource BoolVisConv}}" />
+                                    <Ellipse Width="8" Height="8" Fill="{StaticResource WarnAmber}" Margin="0,0,12,0"
+                                             VerticalAlignment="Center"
+                                             Visibility="{Binding Enabled, Converter={StaticResource BoolVisConv}, ConverterParameter=invert}" />
                                     <StackPanel Grid.Column="1">
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="13"
                                                        Foreground="{StaticResource TextPrimary}" />
+                                            <Border Background="{Binding CapabilityBadge}" CornerRadius="4" Padding="6,1" Margin="8,0,0,0">
+                                                <TextBlock Text="{Binding CapabilityLabel}" FontSize="9.5"
+                                                           Foreground="{Binding CapabilityForeground}" />
+                                            </Border>
                                             <Border Background="#FFF3E0" CornerRadius="4" Padding="6,1" Margin="8,0,0,0"
                                                     Visibility="{Binding RequiresApproval, Converter={StaticResource BoolVisConv}}">
                                                 <TextBlock Text="需审批" FontSize="9.5" Foreground="#E65100" />

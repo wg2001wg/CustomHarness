@@ -94,7 +94,20 @@ public sealed class DeepSeekAdapter : ILlmAdapter
                 ["content"] = m.Content ?? "",
             };
             if (m.ToolCallId != null) dict["tool_call_id"] = m.ToolCallId;
-            if (m.ToolCalls != null) dict["tool_calls"] = m.ToolCalls;
+            if (m.ToolCalls != null)
+            {
+                // OpenAI 兼容格式: tool_calls 元素为 {id, type, function:{name, arguments}}
+                dict["tool_calls"] = m.ToolCalls.Select(tc => (object)new Dictionary<string, object?>
+                {
+                    ["id"] = tc.Id,
+                    ["type"] = "function",
+                    ["function"] = new Dictionary<string, object?>
+                    {
+                        ["name"] = tc.Name,
+                        ["arguments"] = tc.Arguments,
+                    },
+                }).ToList();
+            }
             msgs.Add(dict);
         }
 
@@ -105,7 +118,19 @@ public sealed class DeepSeekAdapter : ILlmAdapter
             ["stream"] = true,
         };
         if (options.Tools is { Count: > 0 })
-            dict2["tools"] = options.Tools;
+        {
+            // OpenAI 兼容格式: tools 元素为 {type:"function", function:{name,description,parameters}}
+            dict2["tools"] = options.Tools.Select(t => (object)new Dictionary<string, object?>
+            {
+                ["type"] = "function",
+                ["function"] = new Dictionary<string, object?>
+                {
+                    ["name"] = t.Function.Name,
+                    ["description"] = t.Function.Description,
+                    ["parameters"] = t.Function.Parameters,
+                },
+            }).ToList();
+        }
         if (options.Temperature.HasValue)
             dict2["temperature"] = options.Temperature.Value;
         if (options.MaxTokens.HasValue)

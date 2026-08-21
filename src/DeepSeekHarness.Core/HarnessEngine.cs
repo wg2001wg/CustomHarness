@@ -19,6 +19,7 @@ public sealed class HarnessEngine : IDisposable
 {
     private readonly AppSettings _settings;
     private readonly PresetLoader _presetLoader;
+    private readonly PresetPluginMapper _pluginMapper;
     private readonly JsonlSessionStore _sessionStore;
     private readonly ToolRegistry _toolRegistry = new();
     private readonly PluginRegistry _pluginRegistry = new();
@@ -31,12 +32,15 @@ public sealed class HarnessEngine : IDisposable
     {
         _settings = settings ?? AppSettings.Load();
         _presetLoader = PresetLoader.FromAppDir();
+        _pluginMapper = new PresetPluginMapper(_presetLoader.DataRoot);
         var sessionRoot = Path.Combine(GetDshHome(), "sessions");
         _sessionStore = new JsonlSessionStore(sessionRoot);
     }
 
     public AppSettings Settings => _settings;
     public PresetLoader PresetLoader => _presetLoader;
+    /// <summary>上游插件同步目录(226 个 @dsh-* 包 + 实现状态映射)。</summary>
+    public PresetPluginMapper PluginMapper => _pluginMapper;
     public ToolRegistry Tools => _toolRegistry;
     public PluginRegistry Plugins => _pluginRegistry;
     public SessionType? CurrentSession { get; private set; }
@@ -178,12 +182,46 @@ public sealed class HarnessEngine : IDisposable
     private void StartPresetPlugins(SessionType session, AgentPreset preset)
     {
         var pluginIds = preset.Rows.Select(r => r.Id).ToHashSet();
+
+        // 1. 显式注册的内置插件(按 preset 行匹配)
         foreach (var plugin in _builtinPlugins)
         {
             if (pluginIds.Contains(plugin.Id))
             {
                 _pluginRegistry.Register(plugin);
             }
+        }
+
+        // 2. preset 行 → 工具插件适配:上游 @dsh-tool-* 行映射到本项目内置工具,
+        //    使插件行真正进入 PluginRegistry(之前从未启动,仅数据层同步)。
+        foreach (var row in preset.Rows)
+        {
+            if (row.Id == null) continue;
+            if (_pluginRegistry.IsRunning(row.Id)) continue;
+            if (!_pluginMapper.TryGetToolNames(row.Id, out var toolNames)) continue;
+            if (toolNames.Count == 0) continue;
+
+            var adapter = new ToolPluginAdapter(
+                row.Id,
+                row.Name ?? row.Id,
+                _pluginMapper.GetDescription(row.Id),
+                () => toolNames
+                    .Select(n => _toolRegistry.TryGet(n, out var t) ? t : null)
+                    .Where(t => t != null)
+                    .Cast<ITool>()
+                    .ToList());
+
+            _pluginRegistry.Register(adapter);
+            var ctx = new PluginContext
+            {
+                PluginId = row.Id,
+                Tools = _toolRegistry,
+                Session = session,
+                Registry = _pluginRegistry,
+                WorkingDirectory = _settings.Workspace,
+                Config = row.Config,
+            };
+            _pluginRegistry.StartAsync(adapter, ctx).GetAwaiter().GetResult();
         }
     }
 

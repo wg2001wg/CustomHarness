@@ -1,0 +1,1586 @@
+{
+  "packages": [
+    {
+      "name": "@deepseek-ai/dsh-acp",
+      "id": "dsh-acp",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Automation-only Agent Client Protocol server for driving DeepSeek Harness agents over JSON-RPC stdio"
+    },
+    {
+      "name": "@deepseek-ai/dsh-api-gateway",
+      "id": "dsh-api-gateway",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Typert Remote Host dispatcher and Client API endpoint"
+    },
+    {
+      "name": "@deepseek-ai/dsh-api-remotes",
+      "id": "dsh-api-remotes",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Remote BFF assembly and Host Agent/Session lookup policy"
+    },
+    {
+      "name": "@deepseek-ai/dsh-attachment-local",
+      "id": "dsh-attachment-local",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Private content-addressed DSH_HOME attachment storage"
+    },
+    {
+      "name": "@deepseek-ai/dsh-attachment",
+      "id": "dsh-attachment",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Durable immutable attachment storage seam for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-app-boot",
+      "id": "dsh-app-boot",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Shared boot glue for the app bins: .env loading, fail-loud Loader guards, snapshot-aware config resolution, and the Loader boot sequence"
+    },
+    {
+      "name": "@deepseek-ai/dsh-cmdline",
+      "id": "dsh-cmdline",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Immutable command-line handoff from a dsh launcher to any app plugin that injects cmdlineArgs"
+    },
+    {
+      "name": "@deepseek-ai/dsh-base",
+      "id": "dsh-base",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "The shared dsh core as a profile bundle: every profile's first patch layer, inserting the base plugin rows over the empty profile root"
+    },
+    {
+      "name": "@deepseek-ai/dsh-headless",
+      "id": "dsh-headless",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "The dsh one-shot bundle: a direct core Agent/Session runner over dsh-base with no Host, HTTP, or browser layer"
+    },
+    {
+      "name": "@deepseek-ai/dsh-web-app",
+      "id": "dsh-web-app",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "The dsh browser-surface bundle: the web patch layer over dsh-base plus the runtime glue plugin (frontend dist serving, web-surface prompt, bash runtime variables, URL line)"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-connection",
+      "id": "dsh-client-connection",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Wire consumer layer: HTTP-up/WebSocket-down client, ConnectionController dual streams with reconnect, and fixture api"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-hmr",
+      "id": "dsh-client-hmr",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Dev-only hot-reload driver for script-loaded client entries: SSE rebuilt frames → invalidate/prefetch → fiber swap through the vendored Loader entry"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-locale",
+      "id": "dsh-client-locale",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Locale plugin: Host-backed zh/en preference, browser-derived fallback, locale snapshots, and typed namespace dictionaries"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-modules",
+      "id": "dsh-client-modules",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Client module system, dual-face: node half composes the __DSH_BOOT__ entry graph (incremental dsh.client scan, bundle route, index tap, webPlugins service); browser half is the lazy-CJS module table the vendored cordis Loader consumes as it"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-runtime",
+      "id": "dsh-client-runtime",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Client core services: SlotRegistry, SessionRuntime (scope tree + object layer)"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-agent-preset",
+      "id": "dsh-client-ui-agent-preset",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Agent-preset surfaces: the default for later sessions, this session's seat, and the composition editor"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-attachment",
+      "id": "dsh-client-ui-attachment",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Dynamic attachment presentation plugin for conversation input and message-image slots"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-brand-official",
+      "id": "dsh-client-ui-brand-official",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Official DeepSeek Harness brand occupants for the Web client's sidebar and conversation Hero slots"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-commands",
+      "id": "dsh-client-ui-commands",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Client command surface: global directory cache, '/' source, three command UI kinds, popupSelect registry"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-conversation",
+      "id": "dsh-client-ui-conversation",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Conversation domain: skeleton, ordered chat flow, composer with the Host-backed busy-Enter preference, and details host"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-deliverables",
+      "id": "dsh-client-ui-deliverables",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Produced-files turn tail and clickable final-response file references for Web"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-directory-picker-browse",
+      "id": "dsh-client-ui-directory-picker-browse",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "In-app directory browsing surface: the workspace directory-flow owner rendering the host's listing and creation primitives"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-directory-picker-native",
+      "id": "dsh-client-ui-directory-picker-native",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Native directory-picker surface: the renderless workspace directory-flow occupant driving the host's OS chooser"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-goal",
+      "id": "dsh-client-ui-goal",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Session goal surface: GoalBar docked above the composer, read from the goal session projection"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-input-trigger",
+      "id": "dsh-client-ui-input-trigger",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Input trigger pipeline: '/' and '@' detection, candidate menu, pick routing to registered sources"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-jobs",
+      "id": "dsh-client-ui-jobs",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Session-header background-job list: live registry state mirrored from session/jobs frames"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-layout",
+      "id": "dsh-client-ui-layout",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Shell plugin: three-column AppFrame with drag handles, ctx.layout viewing-state service (navigation + panels)"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-message-feedback",
+      "id": "dsh-client-ui-message-feedback",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Per-message feedback controls contributed to the assistant-message action strip, backed by the messageFeedback Host Remote"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-model-selection",
+      "id": "dsh-client-ui-model-selection",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Model selection: the /model popupSelect over session.models / session.selectModel"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-permission-presets",
+      "id": "dsh-client-ui-permission-presets",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Permission surfaces: a new-session default in General settings and a current-session /permission popup over the permissions projection"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-plan",
+      "id": "dsh-client-ui-plan",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Plan-mode composer control: the conversation.input.plan seat over the plan projection and the /plan command channel"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-primitives",
+      "id": "dsh-client-ui-primitives",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Pure React atoms for the dsh web UI: controls, icons, markdown, and JSON inspectors (zero cordis)"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-reference",
+      "id": "dsh-client-ui-reference",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Unified Web @file and @session reference source"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-renderer",
+      "id": "dsh-client-ui-renderer",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Browser UI renderer: React slot bindings, ctx.uiRenderer, and the assembled application root"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-settings-general",
+      "id": "dsh-client-ui-settings-general",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Settings ownerless-copy and product onboarding plugin: the General section, shell trigger/header chrome content, settings dictionaries, and the versioned welcome notice"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-settings-models",
+      "id": "dsh-client-ui-settings-models",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Models settings and shared product-onboarding dialogs over existing settings and credential joins"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-settings-plugin-inventory",
+      "id": "dsh-client-ui-settings-plugin-inventory",
+      "scope": "plugin",
+      "version": "0.1.0-rc.8",
+      "description": "Read-only Cordis Loader inventory tab in Web Plugins settings"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-settings-plugins",
+      "id": "dsh-client-ui-settings-plugins",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Plugins settings section with feature-owned tabs and configurable host-plane plugin cards"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-settings",
+      "id": "dsh-client-ui-settings",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Settings domain base plugin: the settings-namespace scope service and the canonical settings slot-type contract"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-sidebar",
+      "id": "dsh-client-ui-sidebar",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Sidebar plugin: session multi-level tree, search, grouping, state dots"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-skill",
+      "id": "dsh-client-ui-skill",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Web skill references and the dedicated skill tool row"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-slots",
+      "id": "dsh-client-ui-slots",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Slot registry pure core: SlotMap declaration merging, single register composition API, four-share props types, store-seat types, renderer install seam"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-subagent",
+      "id": "dsh-client-ui-subagent",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Subagent conversation catalog, continuation routing UI, and '@' reference source"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-theme",
+      "id": "dsh-client-ui-theme",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Theme plugin: Host bootstrap for the pre-plugin palette; DOM-free ThemeRuntime for light/dark/system state; --dsw-* token styles and Appearance settings row"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-tool",
+      "id": "dsh-client-ui-tool",
+      "scope": "tool",
+      "version": "0.1.0-rc.8",
+      "description": "Client Tool call-tree renderer and keyed per-tool presentation slot"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-trajectory",
+      "id": "dsh-client-ui-trajectory",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Trajectory event ledger with an interactive timing overview: pure-consumer plugin registering into the conversation ViewMap (no service)"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-user-questions",
+      "id": "dsh-client-ui-user-questions",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Web ask_user_question feature: host tool mount plus composer-takeover question UI"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-workflow-run",
+      "id": "dsh-client-ui-workflow-run",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Durable workflow-run Conversation Node and nested member disclosure for dsh web"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-workspace",
+      "id": "dsh-client-ui-workspace",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Workspace picker plugin: one WorkspacePicker registered into the sidebar and empty-state workspace slots"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-web",
+      "id": "dsh-client-web",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Web boot kernel: static module table, Cordis loader, framework-free boot page, and UI-renderer handoff"
+    },
+    {
+      "name": "@deepseek-ai/dsh-code-runtime-python",
+      "id": "dsh-code-runtime-python",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "CPython subprocess implementation of the DeepSeek Harness code-execution seam"
+    },
+    {
+      "name": "@deepseek-ai/dsh-code-runtime-worker-thread",
+      "id": "dsh-code-runtime-worker-thread",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Worker-thread implementation of the DeepSeek Harness code-execution seam"
+    },
+    {
+      "name": "@deepseek-ai/dsh-code-runtime",
+      "id": "dsh-code-runtime",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Abstract code-execution seam (ctx.codeRuntime) for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-command-compact",
+      "id": "dsh-command-compact",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Human-facing slash command for explicit session compaction"
+    },
+    {
+      "name": "@deepseek-ai/dsh-compaction-basic",
+      "id": "dsh-compaction-basic",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Token-meter-driven compaction policy and LLM summarization backend for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-compaction-tool-result-pruner",
+      "id": "dsh-compaction-tool-result-pruner",
+      "scope": "tool",
+      "version": "0.1.0-rc.8",
+      "description": "Replay-safe model-free head/middle/tail pruning for tool-result surface nodes"
+    },
+    {
+      "name": "@deepseek-ai/dsh-compaction",
+      "id": "dsh-compaction",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Abstract compaction service seam (ctx.compaction) for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-agent-instructions",
+      "id": "dsh-agent-instructions",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Workspace context loader for AGENTS.md/CLAUDE.md instruction files"
+    },
+    {
+      "name": "@deepseek-ai/dsh-file-reference-local",
+      "id": "dsh-file-reference-local",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Local-filesystem ctx.fileReferences provider with bounded fuzzy indexes"
+    },
+    {
+      "name": "@deepseek-ai/dsh-file-reference",
+      "id": "dsh-file-reference",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "File-reference discovery contract and shared @file grammar"
+    },
+    {
+      "name": "@deepseek-ai/dsh-session-reference",
+      "id": "dsh-session-reference",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Cross-session snapshot references and durable untrusted model context (ctx.sessionReferenceResolver)"
+    },
+    {
+      "name": "@deepseek-ai/dsh-time-context",
+      "id": "dsh-time-context",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Opt-in durable per-step context with the current time and elapsed time"
+    },
+    {
+      "name": "@deepseek-ai/dsh-tmux-context",
+      "id": "dsh-tmux-context",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Opt-in durable per-step context with this agent's tmux pane and window location"
+    },
+    {
+      "name": "@deepseek-ai/dsh-agent-default-model",
+      "id": "dsh-agent-default-model",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Default model selection shared by Agent entry points"
+    },
+    {
+      "name": "@deepseek-ai/dsh-agent-loop",
+      "id": "dsh-agent-loop",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "The concrete agent loop plugin for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-agent-tool-presentation",
+      "id": "dsh-agent-tool-presentation",
+      "scope": "tool",
+      "version": "0.1.0-rc.8",
+      "description": "Agent-plane presentation selector: composes one agent's tools as Code Mode, native, or both"
+    },
+    {
+      "name": "@deepseek-ai/dsh-agent",
+      "id": "dsh-agent",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Agent interface, registry, initiator scope, and event vocabulary for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-scope",
+      "id": "dsh-scope",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Scoped-context registration primitive (scope tags, scope-filtered event dispatch) for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-session",
+      "id": "dsh-session",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Event-sourced session store for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-system-prompt",
+      "id": "dsh-system-prompt",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "System prompt assembly registry for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-tools",
+      "id": "dsh-tools",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Tool registry and execution pipeline for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-credentials-local",
+      "id": "dsh-credentials-local",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "File-backed credentials provider ($DSH_HOME/.env under the live process environment) for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-credentials",
+      "id": "dsh-credentials",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Abstract credential seam (ctx.credentials): settings carry references to secrets, providers own the values"
+    },
+    {
+      "name": "@deepseek-ai/dsh-e2b",
+      "id": "dsh-e2b",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Shared E2B sandbox lifecycle for DeepSeek Harness provider adapters"
+    },
+    {
+      "name": "@deepseek-ai/dsh-fs-e2b",
+      "id": "dsh-fs-e2b",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "E2B filesystem implementation for DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-subprocess-e2b",
+      "id": "dsh-subprocess-e2b",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "E2B subprocess implementation for DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-acp-demo",
+      "id": "dsh-acp-demo",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "ACP automation server app: agent spine + JSONL persistence + ACP transport, with a JSON-RPC stdio bin"
+    },
+    {
+      "name": "@deepseek-ai/dsh-agent-spine-demo",
+      "id": "dsh-agent-spine-demo",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "The default executor-less/UI-less agent spine with fallback session titles, provider-routed retry, and optional persisted goals"
+    },
+    {
+      "name": "@deepseek-ai/dsh-sdk-jsonrpc-demo",
+      "id": "dsh-sdk-jsonrpc-demo",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Bin that boots an external Cordis config for the stdio JSON-RPC SDK runtime"
+    },
+    {
+      "name": "@deepseek-ai/dsh-experimental-agent-team",
+      "id": "dsh-experimental-agent-team",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Implicit-root Agent Teams roster, durable peer mailbox, and shared task DAG"
+    },
+    {
+      "name": "@deepseek-ai/dsh-experimental-tool-agent-team",
+      "id": "dsh-experimental-tool-agent-team",
+      "scope": "tool",
+      "version": "0.1.0-rc.8",
+      "description": "Scoped model-facing Agent Teams tools over ctx.agentTeams"
+    },
+    {
+      "name": "@deepseek-ai/dsh-cordis-client-runner",
+      "id": "dsh-cordis-client-runner",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Browser half of dynamic dual-half plugin packages: event subscription, closure evaluation, guard facade, and loader entries"
+    },
+    {
+      "name": "@deepseek-ai/dsh-cordis-host-runner",
+      "id": "dsh-cordis-host-runner",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Dynamic package definition registry, host-half sandbox lifecycle, and invoke handler table for model-mounted dual-half packages"
+    },
+    {
+      "name": "@deepseek-ai/dsh-tool-cordis",
+      "id": "dsh-tool-cordis",
+      "scope": "tool",
+      "version": "0.1.0-rc.8",
+      "description": "Self-referential cordis toolset: inspect the live runtime, mount and dispose model-written plugins"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-ui-cordis",
+      "id": "dsh-client-ui-cordis",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Cordis dynamic-plugin definition card: the keyed cordis_define tool row with its run/stop switch"
+    },
+    {
+      "name": "@deepseek-ai/dsh-command-feedback",
+      "id": "dsh-command-feedback",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Log-only session feedback producer and human-facing slash command"
+    },
+    {
+      "name": "@deepseek-ai/dsh-message-feedback",
+      "id": "dsh-message-feedback",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Lifecycle-bound per-message rating and note sidecar for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-fs-local",
+      "id": "dsh-fs-local",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Local-filesystem implementation of the DeepSeek Harness filesystem seam (ctx.fs)"
+    },
+    {
+      "name": "@deepseek-ai/dsh-fs-observation-policy",
+      "id": "dsh-fs-observation-policy",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "File-context policy plugin for the DeepSeek Harness — observed-state, read-before-edit, and version-guarded write/edit added over the ctx.fs provider seam through the fs/* event gate (no service API)"
+    },
+    {
+      "name": "@deepseek-ai/dsh-fs-sandbox",
+      "id": "dsh-fs-sandbox",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Sandbox-enforcing implementation of the DeepSeek Harness filesystem seam: fences write/edit by the per-call sandbox mode (read-only denies mutation, workspace-write contains it to the workspace + temp roots) while reads pass through"
+    },
+    {
+      "name": "@deepseek-ai/dsh-fs",
+      "id": "dsh-fs",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Abstract filesystem capability seam (ctx.fs) for the DeepSeek Harness — vocabulary types, the FileSystem service (text IO + optional version-guarded atomic mutations), and the fs/* policy event vocabulary"
+    },
+    {
+      "name": "@deepseek-ai/dsh-tool-fs-search",
+      "id": "dsh-tool-fs-search",
+      "scope": "tool",
+      "version": "0.1.0-rc.8",
+      "description": "Model-facing filesystem discovery tools (glob, grep) backed by the packaged ripgrep binary (@vscode/ripgrep)"
+    },
+    {
+      "name": "@deepseek-ai/dsh-tool-fs",
+      "id": "dsh-tool-fs",
+      "scope": "tool",
+      "version": "0.1.0-rc.8",
+      "description": "Model-facing filesystem tools (read, write, edit) over the DeepSeek Harness filesystem seam (ctx.fs)"
+    },
+    {
+      "name": "@deepseek-ai/dsh-tool-str-replace-editor",
+      "id": "dsh-tool-str-replace-editor",
+      "scope": "tool",
+      "version": "0.1.0-rc.8",
+      "description": "Model-facing view, create, literal replace, and line insert tool over the Harness filesystem service"
+    },
+    {
+      "name": "@deepseek-ai/dsh-command-goal",
+      "id": "dsh-command-goal",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Human-facing slash command for persisted same-session goals"
+    },
+    {
+      "name": "@deepseek-ai/dsh-goal-round-driver",
+      "id": "dsh-goal-round-driver",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Race-fenced same-session goal-round driver"
+    },
+    {
+      "name": "@deepseek-ai/dsh-goal",
+      "id": "dsh-goal",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Event-sourced same-session goal state and lifecycle service for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-tool-goal",
+      "id": "dsh-tool-goal",
+      "scope": "tool",
+      "version": "0.1.0-rc.8",
+      "description": "Model-facing same-session goal tools with execution-time authority checks"
+    },
+    {
+      "name": "@deepseek-ai/dsh-repeat-tool-reminder",
+      "id": "dsh-repeat-tool-reminder",
+      "scope": "tool",
+      "version": "0.1.0-rc.8",
+      "description": "Repeat-tool-call guard plugin: advisory reminders when an agent loops on identical tool calls"
+    },
+    {
+      "name": "@deepseek-ai/dsh-tool-call-timeout-policy",
+      "id": "dsh-tool-call-timeout-policy",
+      "scope": "tool",
+      "version": "0.1.0-rc.8",
+      "description": "Tool-call timeout policy: a tools/execute wrapper that arms a per-tool deadline on exec.signal and returns TOOL_TIMEOUT when it wins"
+    },
+    {
+      "name": "@deepseek-ai/dsh-hook-protocol",
+      "id": "dsh-hook-protocol",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Shared Claude Code / Codex hook wire protocol: matcher engine, stdin/exit-code/stdout codec, multi-hook merge, and hook/* session events"
+    },
+    {
+      "name": "@deepseek-ai/dsh-hooks-claude-code",
+      "id": "dsh-hooks-claude-code",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Bridge plugin: run a Claude Code hooks.json / settings hook config on the DeepSeek Harness interception seams"
+    },
+    {
+      "name": "@deepseek-ai/dsh-hooks-codex",
+      "id": "dsh-hooks-codex",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Bridge plugin: run a Codex hooks.json hook config on the DeepSeek Harness interception seams"
+    },
+    {
+      "name": "@deepseek-ai/dsh-host-apiproxy",
+      "id": "dsh-host-apiproxy",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "API gateway: the ApiProxy contract (api/), the fetch carrier pair (fetch/), and the host-side gateway plugin providing ctx.apiProxy"
+    },
+    {
+      "name": "@deepseek-ai/dsh-host-directory-picker-auto",
+      "id": "dsh-host-directory-picker-auto",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Adaptive chooser of the directory-picker seam: resolves the host situation at boot and mounts the native or browse backend for the DeepSeek Harness web GUI host"
+    },
+    {
+      "name": "@deepseek-ai/dsh-host-directory-picker-browse",
+      "id": "dsh-host-directory-picker-browse",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "In-app browsing backend of the directory-picker seam (listing/creation primitives over the host filesystem)"
+    },
+    {
+      "name": "@deepseek-ai/dsh-host-directory-picker-native",
+      "id": "dsh-host-directory-picker-native",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Native-OS-chooser backend of the directory-picker seam for the DeepSeek Harness web GUI host"
+    },
+    {
+      "name": "@deepseek-ai/dsh-host-directory-picker",
+      "id": "dsh-host-directory-picker",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Abstract workspace-directory picking seam (ctx.directoryPicker) for the DeepSeek Harness web GUI host"
+    },
+    {
+      "name": "@deepseek-ai/dsh-host-frontend-static",
+      "id": "dsh-host-frontend-static",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "SPA dist server for the Web shell: owns the webserver fallback seat, serving the built frontend with index-tap injection, traversal rejection, and SPA index fallback"
+    },
+    {
+      "name": "@deepseek-ai/dsh-host-plugin-inventory",
+      "id": "dsh-host-plugin-inventory",
+      "scope": "plugin",
+      "version": "0.1.0-rc.8",
+      "description": "Read-only Remote projection of current Cordis Loader plugin state"
+    },
+    {
+      "name": "@deepseek-ai/dsh-host-webserver",
+      "id": "dsh-host-webserver",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Web route-registration plugin: HTTP and upgrade routes, index transform taps, and static dist fallback; knows no harness concepts"
+    },
+    {
+      "name": "@deepseek-ai/dsh-anonymous-user-id",
+      "id": "dsh-anonymous-user-id",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Shared anonymous user identity for DeepSeek Harness telemetry and feedback correlation"
+    },
+    {
+      "name": "@deepseek-ai/dsh-commands",
+      "id": "dsh-commands",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Plugin-owned human command registry for DeepSeek Harness UIs"
+    },
+    {
+      "name": "@deepseek-ai/dsh-permission-presets",
+      "id": "dsh-permission-presets",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "User-facing permission presets (ctx.permissionPresets) for the DeepSeek Harness: one product-level Permissions select bundling the sandbox-mode and approval-policy knobs, written through to their own session events"
+    },
+    {
+      "name": "@deepseek-ai/dsh-tool-ask-user",
+      "id": "dsh-tool-ask-user",
+      "scope": "tool",
+      "version": "0.1.0-rc.8",
+      "description": "Model-facing ask_user_question tool over the ctx.userQuestions seam"
+    },
+    {
+      "name": "@deepseek-ai/dsh-user-approval",
+      "id": "dsh-user-approval",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "User-approval seam (ctx.approval) for the DeepSeek Harness: one-shot permission decisions dispatched to composed answerers over the approval/request waterfall, fail-closed by default"
+    },
+    {
+      "name": "@deepseek-ai/dsh-user-questions",
+      "id": "dsh-user-questions",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Abstract user-questions seam (ctx.userQuestions) for asking the human during agent runs"
+    },
+    {
+      "name": "@deepseek-ai/dsh-jobs-local",
+      "id": "dsh-jobs-local",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Process-local implementation of the DeepSeek Harness background job registry seam"
+    },
+    {
+      "name": "@deepseek-ai/dsh-jobs",
+      "id": "dsh-jobs",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Background job registry (ctx.jobs) for the DeepSeek Harness — shared ids, owner isolation, polling, cancellation, and completion listeners for long-running tool work"
+    },
+    {
+      "name": "@deepseek-ai/dsh-tool-jobs",
+      "id": "dsh-tool-jobs",
+      "scope": "tool",
+      "version": "0.1.0-rc.8",
+      "description": "Model-facing background job control tools (job_output, job_list, job_kill) over the ctx.jobs registry"
+    },
+    {
+      "name": "@deepseek-ai/dsh-llm-deepseek",
+      "id": "dsh-llm-deepseek",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "DeepSeek chat-completions adapter for the DeepSeek Harness LLM seam"
+    },
+    {
+      "name": "@deepseek-ai/dsh-llm-pi-ai",
+      "id": "dsh-llm-pi-ai",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "pi-ai-backed DeepSeek adapter for the DeepSeek Harness LLM seam (design-verification twin of dsh-llm-deepseek)"
+    },
+    {
+      "name": "@deepseek-ai/dsh-llm-retry",
+      "id": "dsh-llm-retry",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Provider-routed LLM request retry policy for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-llm",
+      "id": "dsh-llm",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Provider-neutral LLM service interface for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-token-meter",
+      "id": "dsh-token-meter",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Replay-aware token measurement service (ctx.tokenMeter) for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-lsp-stdio",
+      "id": "dsh-lsp-stdio",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Generic stdio language-server provider for the DeepSeek Harness LSP capability seam (ctx.lsp) — spawns configured servers, translates JSON-RPC, and serves transient-open goToDefinition/findReferences/goToImplementation/hover queries in the "
+    },
+    {
+      "name": "@deepseek-ai/dsh-lsp",
+      "id": "dsh-lsp",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Abstract LSP capability seam (ctx.lsp) for the DeepSeek Harness — language-server provider registry keyed by branded id and extension mapping, order-independent per-query selection, normalized definition/references/implementation/hover requ"
+    },
+    {
+      "name": "@deepseek-ai/dsh-tool-lsp",
+      "id": "dsh-tool-lsp",
+      "scope": "tool",
+      "version": "0.1.0-rc.8",
+      "description": "Model-facing lsp tool over the DeepSeek Harness LSP capability seam (ctx.lsp) — one read-only tool with goToDefinition/findReferences/goToImplementation/hover operations, one-based UTF-16 cursor coordinates, bounded location rendering, and "
+    },
+    {
+      "name": "@deepseek-ai/dsh-mcp-client",
+      "id": "dsh-mcp-client",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "MCP client bridge: connects to MCP servers and registers their tools on ctx.tools"
+    },
+    {
+      "name": "@deepseek-ai/dsh-plan-mode",
+      "id": "dsh-plan-mode",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Logged per-agent plan mode with deployment guidance, a direct slash command, and a user-reviewed exit"
+    },
+    {
+      "name": "@deepseek-ai/dsh-agent-presets",
+      "id": "dsh-agent-presets",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Per-session agent composition from preset cordis.yml files for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-persona",
+      "id": "dsh-persona",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Composition-authored deployment persona section for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-invariants",
+      "id": "dsh-invariants",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Registry service for package-owned DeepSeek Harness runtime invariants"
+    },
+    {
+      "name": "@deepseek-ai/dsh-sandbox-local",
+      "id": "dsh-sandbox-local",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Local process-sandbox backends for the DeepSeek Harness sandbox seam: bwrap, the npm-distributed landlock-run launcher, macOS Seatbelt, or the Windows ACL restricted-token runner — functionally probed, fail-closed"
+    },
+    {
+      "name": "@deepseek-ai/dsh-sandbox-policy",
+      "id": "dsh-sandbox-policy",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Per-call sandbox policy resolver and current model context: deployment fallbacks plus each session's mode and workspace root, shared by every enforcing capability family"
+    },
+    {
+      "name": "@deepseek-ai/dsh-sandbox-windows-acl",
+      "id": "dsh-sandbox-windows-acl",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Windows ACL write-restriction sandbox backend (restricted-token spawn with capability-SID write allowlist) for the DeepSeek Harness sandbox seam"
+    },
+    {
+      "name": "@deepseek-ai/dsh-sandbox",
+      "id": "dsh-sandbox",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Abstract process-sandbox seam (ctx.sandbox) for the DeepSeek Harness: same-world confinement vocabulary and the SandboxProvider contract"
+    },
+    {
+      "name": "@deepseek-ai/dsh-schedule",
+      "id": "dsh-schedule",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Agent-scoped durable after, at, and fixed-rate reminders over the session event log"
+    },
+    {
+      "name": "@deepseek-ai/dsh-sdk-client",
+      "id": "dsh-sdk-client",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "TypeScript client SDK for driving a DeepSeek Harness runtime subprocess over stdio JSON-RPC: the DeepSeekHarness high-level turns API and the lower-level HarnessClient"
+    },
+    {
+      "name": "@deepseek-ai/dsh-sdk-protocol",
+      "id": "dsh-sdk-protocol",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Shared wire protocol for the DeepSeek Harness SDK runtime: the newline-delimited JSON-RPC stdio transport and the named request, result, and notification types spoken between the runtime server and SDK clients"
+    },
+    {
+      "name": "@deepseek-ai/dsh-sdk-jsonrpc-server",
+      "id": "dsh-sdk-jsonrpc-server",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Stdio JSON-RPC server plugin for out-of-process DeepSeek Harness SDK clients"
+    },
+    {
+      "name": "@deepseek-ai/dsh-session-log-export",
+      "id": "dsh-session-log-export",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Web Session-log export command and shared download dialog"
+    },
+    {
+      "name": "@deepseek-ai/dsh-session-query-sqlite",
+      "id": "dsh-session-query-sqlite",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Concrete ctx.sessionQuery backend with SQLite FTS5 search"
+    },
+    {
+      "name": "@deepseek-ai/dsh-session-query",
+      "id": "dsh-session-query",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Combined session query service contract with concrete reads, traces, and filters"
+    },
+    {
+      "name": "@deepseek-ai/dsh-tool-session-query",
+      "id": "dsh-tool-session-query",
+      "scope": "tool",
+      "version": "0.1.0-rc.8",
+      "description": "Workspace-authorized model-facing session history search, trace, and event read tools"
+    },
+    {
+      "name": "@deepseek-ai/dsh-session-checkpoint-policy",
+      "id": "dsh-session-checkpoint-policy",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Semantic session durability checkpoints before model requests and tool side effects"
+    },
+    {
+      "name": "@deepseek-ai/dsh-session-persistence-jsonl",
+      "id": "dsh-session-persistence-jsonl",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "JSONL durable session persistence backend for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-session-persistence-sqlite",
+      "id": "dsh-session-persistence-sqlite",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "SQLite durable session persistence with physical chunk-row packing"
+    },
+    {
+      "name": "@deepseek-ai/dsh-session-persistence",
+      "id": "dsh-session-persistence",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Abstract durable session persistence seam (ctx.sessionPersistence) for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-session-projection-cache",
+      "id": "dsh-session-projection-cache",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Persisted projection cache (ctx.sessionProjectionCache): durable per-session projection checkpoints over the domain data form, throttled write-behind, and the cold-read ladder (cache row + persistence tail replay)"
+    },
+    {
+      "name": "@deepseek-ai/dsh-session-projection",
+      "id": "dsh-session-projection",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Session-projection seam: the merge-extensible projection type table, the provider contract, and the ctx.sessionProjections registry serving whole current values of log-derived per-session state"
+    },
+    {
+      "name": "@deepseek-ai/dsh-session-stats",
+      "id": "dsh-session-stats",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Whole-log conversation counts and wall times projection (sessionStats) for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-session-telemetry-otel",
+      "id": "dsh-session-telemetry-otel",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "OpenTelemetry backend for the DeepSeek Harness telemetry seam: hands captured session records to the OTel JS SDK's log pipeline"
+    },
+    {
+      "name": "@deepseek-ai/dsh-session-telemetry",
+      "id": "dsh-session-telemetry",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "SessionTelemetryBackend seam for the DeepSeek Harness: session-event capture, projection, redaction, and handoff to a reporting backend"
+    },
+    {
+      "name": "@deepseek-ai/dsh-session-title-all-prompts-llm",
+      "id": "dsh-session-title-all-prompts-llm",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "All-user-messages LLM provider plugin for DeepSeek Harness session titles"
+    },
+    {
+      "name": "@deepseek-ai/dsh-session-title-first-prompt-llm",
+      "id": "dsh-session-title-first-prompt-llm",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "First-message LLM provider plugin for DeepSeek Harness session titles"
+    },
+    {
+      "name": "@deepseek-ai/dsh-session-title-llm",
+      "id": "dsh-session-title-llm",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Shared LLM generation policy for DeepSeek Harness session-title providers"
+    },
+    {
+      "name": "@deepseek-ai/dsh-session-title",
+      "id": "dsh-session-title",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Log-backed session title service and provider registry for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-settings-file",
+      "id": "dsh-settings-file",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "File-backed settings provider (settings.yaml) for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-settings",
+      "id": "dsh-settings",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Abstract user-settings seam (ctx.settings) for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-bash-local",
+      "id": "dsh-bash-local",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Local-subprocess implementation of the DeepSeek Harness bash executor seam"
+    },
+    {
+      "name": "@deepseek-ai/dsh-bash-sandbox",
+      "id": "dsh-bash-sandbox",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Sandbox-consuming implementation of the DeepSeek Harness bash executor seam (confines every command via ctx.sandbox, reports denial/enforcement result facts)"
+    },
+    {
+      "name": "@deepseek-ai/dsh-pwsh-local",
+      "id": "dsh-pwsh-local",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Local PowerShell implementation of the DeepSeek Harness bash executor seam"
+    },
+    {
+      "name": "@deepseek-ai/dsh-pwsh-sandbox",
+      "id": "dsh-pwsh-sandbox",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Sandbox-consuming implementation of the DeepSeek Harness PowerShell executor seam (confines every command via ctx.sandbox, reports denial/enforcement result facts)"
+    },
+    {
+      "name": "@deepseek-ai/dsh-shell-env",
+      "id": "dsh-shell-env",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Tool-independent managed DSH_* shell environment registry"
+    },
+    {
+      "name": "@deepseek-ai/dsh-shell",
+      "id": "dsh-shell",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Abstract bash executor seam (ctx.shell) for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-tool-bash-persistent",
+      "id": "dsh-tool-bash-persistent",
+      "scope": "tool",
+      "version": "0.1.0-rc.8",
+      "description": "Model-facing owner-scoped persistent Bash tool backed by the Harness PTY service"
+    },
+    {
+      "name": "@deepseek-ai/dsh-tool-bash",
+      "id": "dsh-tool-bash",
+      "scope": "tool",
+      "version": "0.1.0-rc.8",
+      "description": "Model-facing bash tool with optional generic background-job and sandbox-escalation support"
+    },
+    {
+      "name": "@deepseek-ai/dsh-tool-pwsh-persistent",
+      "id": "dsh-tool-pwsh-persistent",
+      "scope": "tool",
+      "version": "0.1.0-rc.8",
+      "description": "Model-facing owner-scoped persistent PowerShell tool backed by the Harness PTY service"
+    },
+    {
+      "name": "@deepseek-ai/dsh-tool-pwsh",
+      "id": "dsh-tool-pwsh",
+      "scope": "tool",
+      "version": "0.1.0-rc.8",
+      "description": "Model-facing pwsh tool over the bash executor seam"
+    },
+    {
+      "name": "@deepseek-ai/dsh-skill-badge",
+      "id": "dsh-skill-badge",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Bundled dsh badge skill provider for DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-skill-filesystem",
+      "id": "dsh-skill-filesystem",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Local filesystem skill provider for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-skill",
+      "id": "dsh-skill",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Agent skill provider registry for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-tool-skill",
+      "id": "dsh-tool-skill",
+      "scope": "tool",
+      "version": "0.1.0-rc.8",
+      "description": "Model-facing skill loading tool for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-spill-local",
+      "id": "dsh-spill-local",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Local-filesystem implementation of the DeepSeek Harness spill storage seam (private session-scoped files)"
+    },
+    {
+      "name": "@deepseek-ai/dsh-spill-policy",
+      "id": "dsh-spill-policy",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Tool-result spill policy for the DeepSeek Harness — replaces oversized plain-text tool results with a retained preview plus a spill-file path (no service API)"
+    },
+    {
+      "name": "@deepseek-ai/dsh-spill",
+      "id": "dsh-spill",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Abstract spill storage seam (ctx.spillStore) for the DeepSeek Harness — save oversized tool text and return a retrieval locator"
+    },
+    {
+      "name": "@deepseek-ai/dsh-storage-domain",
+      "id": "dsh-storage-domain",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Domain data form (ctx.storage.domain): schema-validated, event-emitting KV domains over storage backends for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-storage-json",
+      "id": "dsh-storage-json",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "JSON file KV storage backend for the DeepSeek Harness storage hub"
+    },
+    {
+      "name": "@deepseek-ai/dsh-storage-sqlite",
+      "id": "dsh-storage-sqlite",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "SQLite storage backend (kv facet) for the DeepSeek Harness storage hub"
+    },
+    {
+      "name": "@deepseek-ai/dsh-storage",
+      "id": "dsh-storage",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Storage hub (ctx.storage): named backend registry plus mounted data-form facilities for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-subagent-acp",
+      "id": "dsh-subagent-acp",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Out-of-process ACP subagent backend: drives a child agent in a spawned subprocess over the Agent Client Protocol"
+    },
+    {
+      "name": "@deepseek-ai/dsh-subagent-claude-code",
+      "id": "dsh-subagent-claude-code",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "One-shot Claude Code subagent provider over the official Agent SDK"
+    },
+    {
+      "name": "@deepseek-ai/dsh-subagent-codex",
+      "id": "dsh-subagent-codex",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "One-shot Codex subagent provider over the official app-server protocol"
+    },
+    {
+      "name": "@deepseek-ai/dsh-subagent-dsh-sdk",
+      "id": "dsh-subagent-dsh-sdk",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Out-of-process SDK subagent backend: drives a child DeepSeek Harness runtime subprocess over stdio JSON-RPC through the TypeScript SDK client"
+    },
+    {
+      "name": "@deepseek-ai/dsh-subagent-fork-in-process",
+      "id": "dsh-subagent-fork-in-process",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "In-process fork subagent backend: runs a child agent seeded with a prefix of the parent's log"
+    },
+    {
+      "name": "@deepseek-ai/dsh-subagent-in-process-driver",
+      "id": "dsh-subagent-in-process-driver",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Shared in-process subagent run driver: drives a child agent on ctx.agents (used by the spawn and fork backends)"
+    },
+    {
+      "name": "@deepseek-ai/dsh-subagent-spawn-in-process",
+      "id": "dsh-subagent-spawn-in-process",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "In-process spawn subagent backend: runs a fresh child agent on ctx.agents"
+    },
+    {
+      "name": "@deepseek-ai/dsh-subagent",
+      "id": "dsh-subagent",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Abstract subagent seam (ctx.subagents): named-provider registry for delegating to child agents"
+    },
+    {
+      "name": "@deepseek-ai/dsh-tool-subagent-control",
+      "id": "dsh-tool-subagent-control",
+      "scope": "tool",
+      "version": "0.1.0-rc.8",
+      "description": "Globally named send_message, interrupt_agent, and list_agents tools over ctx.subagents continuations"
+    },
+    {
+      "name": "@deepseek-ai/dsh-tool-subagent-report",
+      "id": "dsh-tool-subagent-report",
+      "scope": "tool",
+      "version": "0.1.0-rc.8",
+      "description": "Child-scoped report tool over ctx.subagents continuations"
+    },
+    {
+      "name": "@deepseek-ai/dsh-tool-subagent",
+      "id": "dsh-tool-subagent",
+      "scope": "tool",
+      "version": "0.1.0-rc.8",
+      "description": "Model-facing subagent delegation tool over the ctx.subagents seam"
+    },
+    {
+      "name": "@deepseek-ai/dsh-subprocess-local",
+      "id": "dsh-subprocess-local",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Local-subprocess implementation of the DeepSeek Harness subprocess seam"
+    },
+    {
+      "name": "@deepseek-ai/dsh-subprocess",
+      "id": "dsh-subprocess",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Subprocess seam (ctx.subprocess) for the DeepSeek Harness — managed process groups, bounded spill-backed output, and escalated kills behind one abstract service"
+    },
+    {
+      "name": "@deepseek-ai/dsh-terminal-bash",
+      "id": "dsh-terminal-bash",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Persistent shell PTY backend over the DeepSeek Harness subprocess terminal primitive"
+    },
+    {
+      "name": "@deepseek-ai/dsh-terminal",
+      "id": "dsh-terminal",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Persistent PTY session seam for the DeepSeek Harness — owner-scoped ids, backend registry, interactive sends, reads, signals, and awaited cleanup"
+    },
+    {
+      "name": "@deepseek-ai/dsh-tool-terminal",
+      "id": "dsh-tool-terminal",
+      "scope": "tool",
+      "version": "0.1.0-rc.8",
+      "description": "Six model-facing persistent PTY tools with owner isolation and generic background-job integration"
+    },
+    {
+      "name": "@deepseek-ai/dsh-acp-snapshot",
+      "id": "dsh-acp-snapshot",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "ACP test kit: shared subprocess launcher, snapshot scenario harness, expected-output normalizers, and suite factory"
+    },
+    {
+      "name": "@deepseek-ai/dsh-agent-loop-testkit",
+      "id": "dsh-agent-loop-testkit",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Shared prerequisite mounting for tests that exercise the concrete agent loop"
+    },
+    {
+      "name": "@deepseek-ai/dsh-client-test-runtime",
+      "id": "dsh-client-test-runtime",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "jsdom slot test runtime: real Cordis Context + SlotRegistry + UI renderer with test-owned session/workspace doubles for feature specs"
+    },
+    {
+      "name": "@deepseek-ai/dsh-llm-mock-server",
+      "id": "dsh-llm-mock-server",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Scriptable OpenAI-compatible HTTP/SSE fault server for LLM recovery tests"
+    },
+    {
+      "name": "@deepseek-ai/dsh-llm-replay",
+      "id": "dsh-llm-replay",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Replay LLM plugin: short-circuits llm/stream with model chunks reconstructed from a recorded session JSONL (keyless snapshot tests)"
+    },
+    {
+      "name": "@deepseek-ai/dsh-loader-smoke",
+      "id": "dsh-loader-smoke",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Shared subprocess and direct-agent harness for keyless real-Loader example smoke tests"
+    },
+    {
+      "name": "@deepseek-ai/dsh-tool-todo",
+      "id": "dsh-tool-todo",
+      "scope": "tool",
+      "version": "0.1.0-rc.8",
+      "description": "Model-facing todo_write tool over the DeepSeek Harness event-sourced session log"
+    },
+    {
+      "name": "@deepseek-ai/dsh-typert-generator",
+      "id": "dsh-typert-generator",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "TypeScript project analyzer and model-driven Typert artifact generator"
+    },
+    {
+      "name": "@deepseek-ai/dsh-typert-loader",
+      "id": "dsh-typert-loader",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Loader integration for generated Typert package contributions"
+    },
+    {
+      "name": "@deepseek-ai/dsh-typert-protocol",
+      "id": "dsh-typert-protocol",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Compiler-independent Remote metadata and Typert provider protocols"
+    },
+    {
+      "name": "@deepseek-ai/dsh-typert-registry",
+      "id": "dsh-typert-registry",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Runtime registry for generated package reflection and Zod schemas"
+    },
+    {
+      "name": "@deepseek-ai/dsh-atomic-write",
+      "id": "dsh-atomic-write",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Zero-dependency atomic file replacement: exclusive-create random-suffix temp + rename carrying the caller-stated permissions (writeFileAtomic)"
+    },
+    {
+      "name": "@deepseek-ai/dsh-brand",
+      "id": "dsh-brand",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Type-only Branded<B> nominal-typing primitive for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-home-paths",
+      "id": "dsh-home-paths",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Shared filesystem path helpers for the DeepSeek Harness"
+    },
+    {
+      "name": "@deepseek-ai/dsh-launch-environment",
+      "id": "dsh-launch-environment",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Immutable DeepSeek Harness launch environment that records which layer supplied each value"
+    },
+    {
+      "name": "@deepseek-ai/dsh-native-command",
+      "id": "dsh-native-command",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Zero-dependency no-shell execFile runner for host-native OS integrations: utf8 stdio capture, abort propagation, Windows hide"
+    },
+    {
+      "name": "@deepseek-ai/dsh-output-retention",
+      "id": "dsh-output-retention",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Zero-dependency bounded-retention primitive: ItemRetainer/TextRetainer + neutral notice helpers (what did we keep, what did we omit)"
+    },
+    {
+      "name": "@deepseek-ai/dsh-timeout",
+      "id": "dsh-timeout",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Zero-dependency timeout/deadline primitive: clampTimeout, deadline, timeoutOf, TimeoutReason (timing + classification only, no termination)"
+    },
+    {
+      "name": "@deepseek-ai/dsh-tool-web",
+      "id": "dsh-tool-web",
+      "scope": "tool",
+      "version": "0.1.0-rc.8",
+      "description": "Model-facing web tools (web_search, web_fetch) over the DeepSeek Harness web capability seam (ctx.web)"
+    },
+    {
+      "name": "@deepseek-ai/dsh-web-fetch-http",
+      "id": "dsh-web-fetch-http",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Anonymous public HTTP(S) fetch provider for the DeepSeek Harness web capability seam (ctx.web)"
+    },
+    {
+      "name": "@deepseek-ai/dsh-web-search-deepseek",
+      "id": "dsh-web-search-deepseek",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "DeepSeek-backed search provider (native web_search via the Anthropic-compatible API) for the DeepSeek Harness web capability seam (ctx.web)"
+    },
+    {
+      "name": "@deepseek-ai/dsh-web-search-exa",
+      "id": "dsh-web-search-exa",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Exa-backed search provider for the DeepSeek Harness web capability seam (ctx.web)"
+    },
+    {
+      "name": "@deepseek-ai/dsh-web-search-perplexity",
+      "id": "dsh-web-search-perplexity",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Perplexity-backed search provider for the DeepSeek Harness web capability seam (ctx.web)"
+    },
+    {
+      "name": "@deepseek-ai/dsh-web",
+      "id": "dsh-web",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Abstract web access capability seam (ctx.web) for the DeepSeek Harness — search/fetch provider registry, registration-order-independent selection, request/result vocabulary, and the WebError taxonomy"
+    },
+    {
+      "name": "@deepseek-ai/dsh-tool-ralph",
+      "id": "dsh-tool-ralph",
+      "scope": "tool",
+      "version": "0.1.0-rc.8",
+      "description": "Model-facing fresh-agent Ralph loop over the workflow and subagent seams"
+    },
+    {
+      "name": "@deepseek-ai/dsh-tool-workflow",
+      "id": "dsh-tool-workflow",
+      "scope": "tool",
+      "version": "0.1.0-rc.8",
+      "description": "Model-facing workflow tool: run a JavaScript orchestration script over ctx.workflowEngine"
+    },
+    {
+      "name": "@deepseek-ai/dsh-workflow-worker-thread",
+      "id": "dsh-workflow-worker-thread",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "worker-thread workflow engine: executes model-written orchestration scripts off the host event loop, bridging agent() calls back to ctx.subagents"
+    },
+    {
+      "name": "@deepseek-ai/dsh-workflow",
+      "id": "dsh-workflow",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Workflow capability seam: ctx.workflowEngine service, run vocabulary, and workflow/* events"
+    },
+    {
+      "name": "@deepseek-ai/dsh-workspace",
+      "id": "dsh-workspace",
+      "scope": "core",
+      "version": "0.1.0-rc.8",
+      "description": "Workspace entity registry (ctx.workspaceRegistry): durable workspace records with validated session attachment over the domain data form for the DeepSeek Harness"
+    }
+  ]
+}

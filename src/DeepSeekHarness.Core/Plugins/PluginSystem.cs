@@ -82,3 +82,37 @@ public sealed class PluginRegistry
 
     public bool IsRunning(string id) => _contexts.ContainsKey(id);
 }
+
+/// <summary>
+/// 工具插件适配器:把 preset 组合行(如 tool-bash / tool-fs)包装为 IPlugin,
+/// 使上游插件行在本项目 PluginRegistry 中真正可见、可启动("一切皆插件")。
+/// StartAsync 时把映射的工具注册进上下文,供 Agent 调用。
+/// </summary>
+public sealed class ToolPluginAdapter : IPlugin
+{
+    private readonly Func<IEnumerable<ITool>> _toolResolver;
+
+    public string Id { get; }
+    public string Name { get; }
+    public string Description { get; }
+
+    public ToolPluginAdapter(string id, string name, string? description, Func<IEnumerable<ITool>> toolResolver)
+    {
+        Id = id;
+        Name = name;
+        Description = description ?? "";
+        _toolResolver = toolResolver;
+    }
+
+    public Task StartAsync(PluginContext ctx)
+    {
+        foreach (var tool in _toolResolver())
+        {
+            if (tool != null)
+                ctx.Tools.Register(tool); // 幂等:同名工具覆盖注册
+        }
+        return Task.CompletedTask;
+    }
+
+    public Task StopAsync() => Task.CompletedTask;
+}

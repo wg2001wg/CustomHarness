@@ -131,6 +131,8 @@ public partial class MainViewModel : ObservableObject
 
         Settings.SettingsApplied += () =>
         {
+            // 重新加载模型列表,同步顶栏选择(新增/删除的 provider/model 生效)
+            LoadModels();
             // 重新初始化 Agent 以应用新配置;失败给出明确提示而非静默
             try
             {

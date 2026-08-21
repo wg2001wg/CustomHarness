@@ -10,6 +10,7 @@ using DeepSeekHarness.Core.Preset;
 using DeepSeekHarness.Core.Session;
 using DeepSeekHarness.Core.Tools;
 using DeepSeekHarness.Core.Tools.Builtin;
+using DeepSeekHarness.Core.Plugins;
 
 // ============ DeepSeek Harness 核心逻辑自测 ============
 var pass = 0;
@@ -199,6 +200,28 @@ if (!cfgThread.Join(TimeSpan.FromSeconds(30)))
 }
 foreach (var (name, ok, detail) in cfgResults)
     Check(name, ok, detail);
+
+// ============ [11] 插件同步(上游 catalog + preset 映射 + 插件启动) ============
+Console.WriteLine("\n== [11] 插件同步(上游 catalog + preset 映射) ==");
+var syncEngine = new HarnessEngine();
+Check("插件目录已同步(>100 包)", syncEngine.PluginMapper.PackageCount > 100,
+    $"实际 {syncEngine.PluginMapper.PackageCount}");
+Check("catalog 含 dsh-tool-bash 包", syncEngine.PluginMapper.Get("@deepseek-ai/dsh-tool-bash") != null);
+var stdPreset = syncEngine.PresetLoader.LoadPreset("standard");
+Check("standard 预设含 16 行插件", stdPreset != null && stdPreset.Rows.Count >= 16,
+    $"实际 {stdPreset?.Rows.Count}");
+if (stdPreset != null)
+{
+    var mapped = stdPreset.Rows.Count(r => syncEngine.PluginMapper.TryGetToolNames(r.Id ?? "", out _));
+    Check("已实现映射行 >= 6", mapped >= 6, $"实际 {mapped}");
+}
+Check("tool-goal 标记待实现",
+    syncEngine.PluginMapper.ResolveCapability("tool-goal") == PluginCapability.Pending);
+var syncSession = syncEngine.NewSession();
+syncEngine.InitAgent(syncSession);
+Check("InitAgent 后插件已启动(>=6)", syncEngine.Plugins.Running.Count >= 6,
+    $"实际 {syncEngine.Plugins.Running.Count}: {string.Join(",", syncEngine.Plugins.Running.Select(x => x.Id))}");
+Check("tool-bash 插件已启动", syncEngine.Plugins.IsRunning("tool-bash"));
 
 Console.WriteLine($"\n========== 结果: {pass} 通过, {fail} 失败 ==========");
 return fail == 0 ? 0 : 1;

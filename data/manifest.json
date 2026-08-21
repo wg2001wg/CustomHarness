@@ -13,6 +13,9 @@
     "headless",
     "web-app"
   ],
+  "plugins": [
+    "catalog.json"
+  ],
   "docs": [
     "tool-catalog.md",
     "config-catalog.md",
