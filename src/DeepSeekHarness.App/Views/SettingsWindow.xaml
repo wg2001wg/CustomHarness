@@ -94,7 +94,7 @@
                                                         <Button Grid.Column="1" Content="✕" FontSize="10" Padding="8,2"
                                                                 Background="Transparent" BorderThickness="0"
                                                                 Foreground="{StaticResource TextTertiary}"
-                                                                Command="{Binding DataContext.RemoveModelCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                Command="{Binding DataContext.RemoveModelCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                                 CommandParameter="{Binding}" ToolTip="删除该模型" />
                                                     </Grid>
                                                 </Border>
