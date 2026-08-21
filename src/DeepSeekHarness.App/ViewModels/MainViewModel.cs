@@ -32,6 +32,7 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private ModelItemViewModel? _selectedModelItem;
 
+
     public string[] Efforts { get; } = { "low", "medium", "high" };
 
     public MainViewModel()
@@ -98,12 +99,15 @@ public partial class MainViewModel : ObservableObject
             m.ProviderId == Engine.Settings.ProviderId && m.ModelId == Engine.Settings.ModelId);
     }
 
-    partial void OnSelectedModelItemChanged(ModelItemViewModel? value)
+    partial void OnSelectedModelItemChanged(ModelItemViewModel value)
     {
-        if (value == null) return;
         Engine.Settings.ProviderId = value.ProviderId;
         Engine.Settings.ModelId = value.ModelId;
         Engine.Settings.Save();
+        // 同步到对话 VM 的选择(发送时 SendAsync 使用),确保顶栏切换与请求一致。
+        Conversation.SelectedProvider = value.ProviderId;
+        Conversation.SelectedModel = value.ModelId;
+        System.Diagnostics.Debug.WriteLine($"[ModelSwitch] → provider={value.ProviderId}, model={value.ModelId}");
         // 不再需要重建 Agent:AgentLoop 已实时绑定 AppSettings,
         // 下次请求自动按最新的 provider/model + 对应 BaseUrl/ApiKey 发起调用。
     }
