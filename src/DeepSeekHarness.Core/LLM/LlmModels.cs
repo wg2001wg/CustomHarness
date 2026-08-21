@@ -104,7 +104,7 @@ public sealed class LlmException : Exception
             case "AUTH_INVALID_API_KEY":
                 return "API Key 无效或已过期。请在 ⚙ 设置中检查并更新 API Key。";
             case "INSUFFICIENT_BALANCE":
-                return "账户余额不足,无法发起请求。请前往 DeepSeek 平台充值后再试。";
+                return "账户余额不足,无法发起请求。请前往当前平台充值后再试。";
             case "RATE_LIMITED":
                 return "请求过于频繁,已被限流。请稍等片刻后重试。";
             case "MODEL_NOT_FOUND":
@@ -150,7 +150,7 @@ public sealed class LlmException : Exception
         // 3) 依错误消息内容兜底匹配
         var lower = (rawMessage ?? "").ToLowerInvariant();
         if (lower.Contains("insufficient") && lower.Contains("balance"))
-            return "账户余额不足,无法发起请求。请前往 DeepSeek 平台充值后再试。";
+            return "账户余额不足,无法发起请求。请前往当前平台充值后再试。";
         if (lower.Contains("rate limit") || lower.Contains("too many requests"))
             return "请求过于频繁,已被限流。请稍等片刻后重试。";
         if (lower.Contains("invalid api key") || lower.Contains("authentication"))

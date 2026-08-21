@@ -104,6 +104,8 @@ public partial class MainViewModel : ObservableObject
         Engine.Settings.ProviderId = value.ProviderId;
         Engine.Settings.ModelId = value.ModelId;
         Engine.Settings.Save();
+        // 不再需要重建 Agent:AgentLoop 已实时绑定 AppSettings,
+        // 下次请求自动按最新的 provider/model + 对应 BaseUrl/ApiKey 发起调用。
     }
 
     private void WireEvents()

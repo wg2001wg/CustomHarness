@@ -123,14 +123,9 @@ public sealed class HarnessEngine : IDisposable
             session,
             _llm,
             _scheduler,
-            new AgentLoop.AppSettingsConfig
-            {
-                ProviderId = _settings.ProviderId,
-                ModelId = _settings.ModelId,
-                ReasoningEffort = _settings.ReasoningEffort,
-                PermissionLevel = _settings.Permission,
-                ApiKeyResolver = _ => _settings.ResolveApiKey(_settings.ProviderId),
-            },
+            // 实时绑定 AppSettings:切换 provider/model 后,AgentLoop 内部读取始终是最新值
+            // (不再用 InitAgent 时的固化快照)。
+            new AgentLoop.AppSettingsConfig(_settings, id => _settings.ResolveApiKey(id)),
             preset,
             _settings.Workspace);
         Agent = _agentLoop; // 同步公开属性(此前缺失导致 Agent 恒为 null)

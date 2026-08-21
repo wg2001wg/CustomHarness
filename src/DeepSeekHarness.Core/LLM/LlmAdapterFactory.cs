@@ -19,11 +19,14 @@ public static class LlmAdapterFactory
     {
         var provider = settings.Providers.FirstOrDefault(p => p.Id == providerId);
         if (provider == null)
-            return new DeepSeekAdapter(Http, () => settings.ResolveApiKey(providerId));
+            return new DeepSeekAdapter(Http,
+                () => settings.ResolveApiKey(providerId),
+                settingsProvider: () => settings);
 
         return new DeepSeekAdapter(
             Http,
             () => settings.ResolveApiKey(providerId),
-            () => string.IsNullOrWhiteSpace(provider.BaseUrl) ? DeepSeekAdapter.DefaultEndpoint : provider.BaseUrl);
+            () => string.IsNullOrWhiteSpace(provider.BaseUrl) ? DeepSeekAdapter.DefaultEndpoint : provider.BaseUrl,
+            settingsProvider: () => settings);
     }
 }

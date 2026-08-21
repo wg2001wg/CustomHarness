@@ -5,6 +5,7 @@ using System.Text.Json;
 
 namespace DeepSeekHarness.Core.LLM;
 
+using DeepSeekHarness.Core.Config;
 using DeepSeekHarness.Core.Session;
 
 /// <summary>
@@ -19,14 +20,18 @@ public sealed class DeepSeekAdapter : ILlmAdapter
     private readonly HttpClient _http;
     private readonly Func<string?> _apiKeyResolver;
     private readonly Func<string?> _baseUrlResolver;
+    /// <summary>实时设置引用(可选)。提供后,每次请求都会按 options.Provider 解析最新的 BaseUrl/ApiKey,实现切换模型即时生效。</summary>
+    private readonly Func<AppSettings>? _settingsProvider;
 
     public string ProviderName => "deepseek-official";
 
-    public DeepSeekAdapter(HttpClient http, Func<string?> apiKeyResolver, Func<string?>? baseUrlResolver = null)
+    public DeepSeekAdapter(HttpClient http, Func<string?> apiKeyResolver, Func<string?>? baseUrlResolver = null,
+        Func<AppSettings>? settingsProvider = null)
     {
         _http = http;
         _apiKeyResolver = apiKeyResolver;
         _baseUrlResolver = baseUrlResolver ?? (() => DefaultEndpoint);
+        _settingsProvider = settingsProvider;
     }
 
     public bool CanHandle(string provider)
@@ -39,10 +44,11 @@ public sealed class DeepSeekAdapter : ILlmAdapter
         [EnumeratorCancellation] CancellationToken ct = default)
     {
         ct = options.CancellationToken == default ? ct : options.CancellationToken;
-        var apiKey = _apiKeyResolver();
+        // 优先按 options.Provider 在实时 settings 中解析 API Key(支持切换 provider 立即生效)
+        var apiKey = ResolveApiKeyForCurrentProvider(options);
         if (string.IsNullOrEmpty(apiKey))
             throw new LlmException(options.Provider, options.Model, "AUTH_MISSING_API_KEY",
-                "未配置 DeepSeek API Key。请在设置中填写(环境变量 DEEPSEEK_API_KEY 或应用设置)。");
+                "未配置 API Key。请在设置中填写对应提供商的 API Key 后再试。");
 
         var payload = BuildPayload(options);
         var baseUrl = ResolveBaseUrl(options);
@@ -249,18 +255,43 @@ public sealed class DeepSeekAdapter : ILlmAdapter
         return cur.ValueKind == JsonValueKind.Number ? cur.GetInt32() : null;
     }
 
-    /// <summary>解析当前 provider 的基地址:优先实例级 resolver(由工厂按 provider 配置注入)。</summary>
+    /// <summary>解析当前 provider 的基地址:优先按 options.Provider 在实时 settings 中查找,再回退到实例级 resolver。</summary>
     private string ResolveBaseUrl(GenerateOptions options)
     {
-        // 自定义 provider 通过实例 resolver 提供其 BaseUrl
+        // 1) 优先:按 options.Provider 在实时 AppSettings 中查找(支持切换 provider 立即生效)
+        if (_settingsProvider != null && !string.IsNullOrEmpty(options.Provider))
+        {
+            var settings = _settingsProvider();
+            var provider = settings.Providers.FirstOrDefault(p =>
+                string.Equals(p.Id, options.Provider, StringComparison.OrdinalIgnoreCase));
+            if (provider != null && !string.IsNullOrWhiteSpace(provider.BaseUrl))
+                return provider.BaseUrl.TrimEnd('/');
+        }
+
+        // 2) 实例级 resolver(由工厂按 provider 配置注入,用于旧调用方)
         var custom = _baseUrlResolver();
         if (!string.IsNullOrWhiteSpace(custom)) return custom.TrimEnd('/');
 
-        // DeepSeek 官方支持环境变量覆盖(向后兼容)
+        // 3) DeepSeek 官方支持环境变量覆盖(向后兼容)
         var env = Environment.GetEnvironmentVariable("DEEPSEEK_API_BASE");
         if (!string.IsNullOrWhiteSpace(env)) return env.TrimEnd('/');
 
         return DefaultEndpoint;
+    }
+
+    /// <summary>按 options.Provider 解析 API Key:优先实时 settings,再回退到实例 resolver。</summary>
+    private string? ResolveApiKeyForCurrentProvider(GenerateOptions options)
+    {
+        // 1) 优先:按 options.Provider 在实时 AppSettings 中查找
+        if (_settingsProvider != null && !string.IsNullOrEmpty(options.Provider))
+        {
+            var settings = _settingsProvider();
+            var key = settings.ResolveApiKey(options.Provider);
+            if (!string.IsNullOrEmpty(key)) return key;
+        }
+
+        // 2) 回退到实例 resolver
+        return _apiKeyResolver();
     }
 
     /// <summary>解析 HTTP 错误响应,提取稳定的错误码与可读的底层信息(供 FriendlyMessage 使用)。</summary>

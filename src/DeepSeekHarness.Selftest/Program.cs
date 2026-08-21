@@ -100,11 +100,8 @@ Console.WriteLine("\n== [5] AgentLoop 冒烟(Mock LLM) ==");
 var mockLlm = new MockLlm();
 var agentSession = new Session(new SessionHeader { Id = "agent-test", Cwd = Directory.GetCurrentDirectory() });
 var agent = new AgentLoop(agentSession, mockLlm, scheduler,
-    new AgentLoop.AppSettingsConfig
-    {
-        ProviderId = "mock", ModelId = "mock-model",
-        PermissionLevel = PermissionLevel.WorkspaceWrite,
-    },
+    new AgentLoop.AppSettingsConfig("mock", "mock-model",
+        permissionLevel: PermissionLevel.WorkspaceWrite),
     loader.LoadPreset("standard") ?? new AgentPreset { Name = "standard" },
     Directory.GetCurrentDirectory());
 agent.MaxSteps = 3;

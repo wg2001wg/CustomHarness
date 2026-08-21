@@ -337,6 +337,8 @@ public partial class ConversationViewModel : ObservableObject
             _engine.Settings.ModelId = SelectedModel;
             _engine.Settings.ReasoningEffort = SelectedEffort;
             _engine.Settings.Save();
+            // 不再需要重建 Agent:AgentLoop 与 DeepSeekAdapter 都已实时绑定 AppSettings,
+            // 下次请求自动按最新的 provider/model + 对应 BaseUrl/ApiKey 发起调用。
 
             // 在消息流中立即展示用户消息
             Items.Add(new ChatItemViewModel(MessageKind.User, Guid.NewGuid().ToString("N")) { Text = text });

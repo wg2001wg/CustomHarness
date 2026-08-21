@@ -2,6 +2,7 @@ using System.Text.Json;
 
 namespace DeepSeekHarness.Core.Agent;
 
+using DeepSeekHarness.Core.Config;
 using DeepSeekHarness.Core.LLM;
 using DeepSeekHarness.Core.Preset;
 using DeepSeekHarness.Core.Session;
@@ -48,11 +49,44 @@ public sealed class AgentLoop
 
     public sealed class AppSettingsConfig
     {
-        public required string ProviderId { get; init; }
-        public required string ModelId { get; init; }
-        public string ReasoningEffort { get; init; } = "medium";
-        public PermissionLevel PermissionLevel { get; init; } = PermissionLevel.WorkspaceWrite;
+        // 优先使用实时 AppSettings 引用(切换 provider/model 立即生效);
+        // 若未提供,则回退到构造时的快照值(用于自测/单测)。
+        private readonly AppSettings? _live;
+
+        public string ProviderId => _live?.ProviderId ?? _providerId!;
+        public string ModelId => _live?.ModelId ?? _modelId!;
+        public string ReasoningEffort => _live?.ReasoningEffort ?? _reasoningEffort;
+        public PermissionLevel PermissionLevel => _live?.Permission ?? _permissionLevel;
         public Func<string?, string?> ApiKeyResolver { get; init; } = _ => null;
+
+        // 快照字段(无 AppSettings 引用时使用)
+        private readonly string? _providerId;
+        private readonly string? _modelId;
+        private readonly string _reasoningEffort;
+        private readonly PermissionLevel _permissionLevel;
+
+        // 1) 实时模式:直接绑定 AppSettings,所有读取为最新值
+        public AppSettingsConfig(AppSettings live, Func<string?, string?>? apiKeyResolver = null)
+        {
+            _live = live;
+            _reasoningEffort = "medium";
+            _permissionLevel = PermissionLevel.WorkspaceWrite;
+            if (apiKeyResolver != null) ApiKeyResolver = apiKeyResolver;
+        }
+
+        // 2) 快照模式(用于自测/单测/无 settings 场景)
+        public AppSettingsConfig(
+            string providerId, string modelId,
+            string reasoningEffort = "medium",
+            PermissionLevel permissionLevel = PermissionLevel.WorkspaceWrite,
+            Func<string?, string?>? apiKeyResolver = null)
+        {
+            _providerId = providerId;
+            _modelId = modelId;
+            _reasoningEffort = reasoningEffort;
+            _permissionLevel = permissionLevel;
+            if (apiKeyResolver != null) ApiKeyResolver = apiKeyResolver;
+        }
     }
 
     public AgentLoop(
