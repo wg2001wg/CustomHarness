@@ -99,8 +99,9 @@ public partial class MainViewModel : ObservableObject
             m.ProviderId == Engine.Settings.ProviderId && m.ModelId == Engine.Settings.ModelId);
     }
 
-    partial void OnSelectedModelItemChanged(ModelItemViewModel value)
+    partial void OnSelectedModelItemChanged(ModelItemViewModel? value)
     {
+        if (value == null) return;
         Engine.Settings.ProviderId = value.ProviderId;
         Engine.Settings.ModelId = value.ModelId;
         Engine.Settings.Save();

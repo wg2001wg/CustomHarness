@@ -348,7 +348,13 @@ public partial class ConversationViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            // 任何运行异常以系统消息呈现,保持 UI 可用
+            // 防御:避免与 AgentLoop 的 AssistantMessageCompleted 重复显示同一条错误。
+            // AgentLoop 内部 catch LlmException/Exception 后已通过 AssistantMessageCompleted
+            // 事件向 UI 推送错误消息(蓝色),此处不再额外追加系统消息(黄色)。
+            // 仅在 AgentLoop 未覆盖的异常类型(如 InvalidOperationException)时才显示。
+            if (ex is LlmException)
+                return; // AgentLoop 已呈现,不再重复
+            // 其他未预期异常:仍以系统消息兜底,保证 UI 可用
             AddSystemMessage(BuildSendFailureMessage(ex));
         }
         finally

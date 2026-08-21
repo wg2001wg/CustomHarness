@@ -207,7 +207,8 @@ public sealed class AgentLoop
         }
         catch (LlmException ex)
         {
-            var friendly = LlmException.FriendlyMessage(ex.ErrorCode, ex.Message);
+            // ex.Message 已被适配器(FriendlyMessage)友好化,直接使用,避免重复前缀
+            var friendly = ex.Message;
             var err = new Message
             {
                 Role = MessageRole.Assistant,

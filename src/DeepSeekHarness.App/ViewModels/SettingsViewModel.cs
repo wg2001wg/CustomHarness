@@ -231,10 +231,8 @@ public partial class SettingsViewModel : ObservableObject
     private void Apply()
     {
         var s = _engine.Settings;
-        if (SelectedProvider != null)
-        {
-            s.ProviderId = SelectedProvider.Config.Id;
-        }
+        // ProviderId/ModelId 由顶栏 ComboBox 统一管理(OnSelectedModelItemChanged),
+        // 此处不再覆盖,避免用户在设置里改 API Key 时误把顶栏已切换的平台重置回旧平台。
         // 每个厂商的 API Key 独立写回各自配置,互不覆盖
         foreach (var vm in Providers)
         {

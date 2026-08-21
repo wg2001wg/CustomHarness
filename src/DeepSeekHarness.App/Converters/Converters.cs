@@ -129,7 +129,7 @@ public sealed class BoolToVisibilityConverter : IValueConverter
 public sealed class KindIsUserConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        => value is MessageKind.User;
+        => value is MessageKind.User ? Visibility.Visible : Visibility.Collapsed;
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         => throw new NotSupportedException();
@@ -139,7 +139,7 @@ public sealed class KindIsUserConverter : IValueConverter
 public sealed class KindIsAssistantConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        => value is MessageKind.Assistant;
+        => value is MessageKind.Assistant ? Visibility.Visible : Visibility.Collapsed;
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         => throw new NotSupportedException();
@@ -149,7 +149,7 @@ public sealed class KindIsAssistantConverter : IValueConverter
 public sealed class KindIsSystemConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        => value is MessageKind.System;
+        => value is MessageKind.System ? Visibility.Visible : Visibility.Collapsed;
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         => throw new NotSupportedException();
