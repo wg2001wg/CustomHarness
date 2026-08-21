@@ -1,0 +1,69 @@
+== [1] 数据导入与预设加载 ==
+  ✅ 发现预设目录
+  ✅ 预设 [standard] 可解析
+  ✅ 预设 [code] 可解析
+  ✅ 预设 [minimal] 可解析
+  ✅ 预设 [cordis] 可解析
+  ✅ bundle [base] 可解析
+
+== [2] 会话事件日志与派生 ==
+  ✅ 事件序号单调
+  ✅ surface 事件数=3(user/assistant/tool-result)
+  ✅ 派生消息含 user+assistant+tool(3 条)
+  ✅ tool 消息关联 callId
+
+== [3] JSONL 持久化往返 ==
+  ✅ 会话可重载
+  ✅ 重载后消息数一致
+  ✅ 重载后标题/工作区保留
+
+== [4] 工具注册与执行 ==
+  ✅ 工具注册(6)
+  ✅ read 工具执行
+  ✅ glob 工具执行
+  ✅ grep 工具执行
+
+== [5] AgentLoop 冒烟(Mock LLM) ==
+  ✅ turn 正常结束
+  ✅ 流式文本已输出
+  ✅ 会话含 assistant 消息
+
+== [6] 系统提示组装 ==
+  ✅ 系统提示含 persona
+  ✅ 系统提示含工具指引
+
+== [7] 设置窗口 Tab 切换(UI 回归) ==
+  ✅ 找到导航 ListBox
+  ✅ 导航有 4 个 Tab
+  ✅ 初始 SelectedTab=Models
+  ✅ 初始 Models 可见
+  ✅ 初始其它页隐藏
+  ✅ 来回切换 3 轮:SelectedTab 与面板可见性始终正确
+
+== [8] 发送消息空引用防御(UI 回归) ==
+  ✅ 初始 Agent 为 null(模拟未初始化)
+  ✅ 发送不抛异常(Agent=null 时)
+  ✅ 有反馈消息(懒初始化后 user 消息或提示)
+  ✅ 无空引用崩溃
+
+== [9] 主窗口尺寸自适应(UI) ==
+  ✅ 宽度不超出工作区
+  ✅ 高度不超出工作区
+  ✅ 不小于最小尺寸
+  ✅ 水平居中于工作区
+  ✅ 垂直居中于工作区
+  ✅ 窗口占比合理(>60%)
+
+== [10] 配置后 Agent 可用 + 损坏会话容错 ==
+  ✅ 损坏 jsonl 加载不抛异常
+  ✅ 损坏行被跳过、header 恢复
+  ✅ InitAgent 后 Agent 非 null
+  ✅ EnsureAgent 幂等(不重建)
+  ✅ AssistantMessageCompleted 事件已触发
+  ✅ 配置后发送不抛异常
+  ✅ 发送后有反馈消息
+  ✅ 无'未初始化'提示
+  ✅ 会话日志含错误事件
+  ✅ 错误反馈为 LLM 配置类提示
+
+========== 结果: 48 通过, 0 失败 ==========

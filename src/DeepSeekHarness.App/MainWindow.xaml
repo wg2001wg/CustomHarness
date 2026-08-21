@@ -1,0 +1,246 @@
+﻿<Window x:Class="DeepSeekHarness.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:conv="clr-namespace:DeepSeekHarness.App.Converters"
+        xmlns:ctrls="clr-namespace:DeepSeekHarness.App.Controls"
+        xmlns:vm="clr-namespace:DeepSeekHarness.App.ViewModels"
+        Title="DeepSeek Harness" Height="800" Width="1400"
+        MinHeight="560" MinWidth="960"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource BgLayer2}"
+        FontFamily="Microsoft YaHei UI">
+    <Window.Resources>
+        <!-- ===== 思考过程折叠行 ===== -->
+        <DataTemplate x:Key="ReasoningTemplate">
+            <Expander Margin="0,6,0,4" IsExpanded="{Binding ReasoningExpanded, Mode=TwoWay}">
+                <Expander.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="🧠" FontSize="12" Margin="0,0,6,0" />
+                        <TextBlock Text="Think(思考过程)" FontSize="12" Foreground="{StaticResource TextSecondary}" />
+                        <TextBlock Text="{Binding Reasoning}" FontSize="12" Foreground="{StaticResource TextTertiary}"
+                                   Margin="10,0,0,0" TextTrimming="CharacterEllipsis" MaxWidth="260" />
+                    </StackPanel>
+                </Expander.Header>
+                <Border Background="{StaticResource BgLayer3}" CornerRadius="8" Padding="10" Margin="0,6,0,0">
+                    <TextBlock Text="{Binding Reasoning}" TextWrapping="Wrap" FontSize="12.5"
+                               Foreground="{StaticResource TextSecondary}" />
+                </Border>
+            </Expander>
+        </DataTemplate>
+
+        <!-- ===== 工具调用卡片 ===== -->
+        <DataTemplate x:Key="ToolCallTemplate">
+            <Border Background="{StaticResource BgLayer3}" CornerRadius="8" BorderBrush="{StaticResource BorderColor}"
+                    BorderThickness="1" Margin="0,4" Padding="0">
+                <Expander IsExpanded="{Binding Expanded, Mode=TwoWay}">
+                    <Expander.Header>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Ellipse Width="8" Height="8" Fill="{Binding Status, Converter={StaticResource ToolStatusBrushConv}}"
+                                     Margin="8,0,8,0" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="1" Text="{Binding Name}" FontWeight="SemiBold" FontSize="12.5"
+                                       Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="2" Text="{Binding ArgumentsPreview}" FontSize="11.5"
+                                       Foreground="{StaticResource TextTertiary}" Margin="10,0,0,0"
+                                       TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                            <StackPanel Grid.Column="3" Orientation="Horizontal" Margin="10,0,8,0" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Status, Converter={StaticResource ToolStatusLabelConv}}"
+                                           FontSize="11" Foreground="{StaticResource TextSecondary}" Margin="0,0,8,0" />
+                                <TextBlock Text="{Binding DurationLabel}" FontSize="11" Foreground="{StaticResource TextTertiary}" />
+                            </StackPanel>
+                        </Grid>
+                    </Expander.Header>
+                    <StackPanel Margin="8,4,8,10">
+                        <!-- IN -->
+                        <TextBlock Text="IN" FontSize="10" Foreground="{StaticResource TextTertiary}" Margin="4,6,0,2" />
+                        <Border Background="{StaticResource BgLayer1}" CornerRadius="6" Padding="8" BorderBrush="{StaticResource BorderColor}" BorderThickness="1">
+                            <TextBlock Text="{Binding ArgumentsPreview}" FontSize="12" FontFamily="Cascadia Mono, Consolas"
+                                       Foreground="{StaticResource TextPrimary}" TextWrapping="Wrap" />
+                        </Border>
+                        <!-- OUT / ERROR -->
+                        <TextBlock Text="{Binding Error, Converter={StaticResource StrVisConv}}" FontSize="10"
+                                   Foreground="{StaticResource ErrorRed}" Margin="4,6,0,2" />
+                        <Border Background="{StaticResource BgLayer1}" CornerRadius="6" Padding="8"
+                                BorderBrush="{StaticResource BorderColor}" BorderThickness="1" Margin="0,0,0,2"
+                                Visibility="{Binding Output, Converter={StaticResource StrVisConv}}">
+                            <TextBlock Text="{Binding Output}" FontSize="12" FontFamily="Cascadia Mono, Consolas"
+                                       Foreground="{StaticResource TextPrimary}" TextWrapping="Wrap" />
+                        </Border>
+                    </StackPanel>
+                </Expander>
+            </Border>
+        </DataTemplate>
+
+        <!-- ===== 消息模板(用户/助手/系统) ===== -->
+        <DataTemplate x:Key="MessageTemplate">
+            <StackPanel Margin="0,6">
+                <!-- 系统消息(错误/状态提示) -->
+                <Border Background="#FFF8E1" BorderBrush="#F5D98B" BorderThickness="1" CornerRadius="8"
+                        Padding="12,8" Margin="0,2" HorizontalAlignment="Stretch"
+                        Visibility="{Binding Kind, Converter={StaticResource KindIsSystemConv}}">
+                    <TextBlock Text="{Binding Text}" TextWrapping="Wrap" FontSize="12.5"
+                               Foreground="#7A5B00" />
+                </Border>
+                <!-- 用户消息 -->
+                <Grid Visibility="{Binding Kind, Converter={StaticResource KindIsUserConv}}">
+                    <Border Background="{StaticResource DeepSeekBlue}" CornerRadius="12" Padding="12,9"
+                            HorizontalAlignment="Right" MaxWidth="720">
+                        <TextBlock Text="{Binding Text}" TextWrapping="Wrap" Foreground="White" FontSize="13.5" />
+                    </Border>
+                </Grid>
+                <!-- 助手消息 -->
+                <StackPanel Visibility="{Binding Kind, Converter={StaticResource KindIsAssistantConv}}">
+                    <ContentControl Content="{Binding}" ContentTemplate="{StaticResource ReasoningTemplate}"
+                                    Visibility="{Binding HasReasoning, Converter={StaticResource BoolVisConv}}" />
+                    <ctrls:MarkdownView MarkdownText="{Binding Text}" MinHeight="20"
+                                        Visibility="{Binding Text, Converter={StaticResource StrVisConv}}" />
+                    <ItemsControl ItemsSource="{Binding ToolCalls}" ItemTemplate="{StaticResource ToolCallTemplate}"
+                                  Visibility="{Binding HasToolCalls, Converter={StaticResource BoolVisConv}}" />
+                    <TextBlock Text="●" FontSize="10" Foreground="{StaticResource DeepSeekBlue}"
+                               Visibility="{Binding Streaming, Converter={StaticResource BoolVisConv}}" />
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="{Binding IsSidebarCollapsed, Converter={StaticResource SidebarWidthConv}}" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- ================= 左侧栏 Sidebar ================= -->
+        <Border Grid.Column="0" Background="{StaticResource BgLayer1}" BorderBrush="{StaticResource BorderColor}" BorderThickness="0,0,1,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- Logo + 新建 -->
+                <Border Grid.Row="0" Padding="14,14,14,10">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="30" Height="30" CornerRadius="8" Background="{StaticResource DeepSeekBlue}" Margin="0,0,10,0">
+                                <TextBlock Text="🐋" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <StackPanel>
+                                <TextBlock Text="DeepSeek" FontWeight="Bold" FontSize="15" Foreground="{StaticResource TextPrimary}" />
+                                <TextBlock Text="Harness" FontSize="11" Foreground="{StaticResource TextTertiary}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <Button Content="✚  新会话" Style="{StaticResource PrimaryButton}" Margin="0,14,0,0"
+                                Command="{Binding Sidebar.NewSessionCommand}" />
+                    </StackPanel>
+                </Border>
+
+                <!-- 会话列表 -->
+                <ListBox Grid.Row="1" ItemsSource="{Binding Sidebar.Sessions}"
+                         SelectedItem="{Binding Sidebar.SelectedSession, Mode=TwoWay}"
+                         Background="Transparent" BorderThickness="0" Padding="8,0">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Title}" FontSize="12.5" FontWeight="Medium"
+                                               Foreground="{StaticResource TextPrimary}" TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Text="{Binding TimeLabel}" FontSize="10.5" Foreground="{StaticResource TextTertiary}" />
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <!-- 底部:状态 + 设置 -->
+                <Border Grid.Row="2" Padding="12" BorderBrush="{StaticResource BorderColor}" BorderThickness="0,1,0,0">
+                    <StackPanel>
+                        <TextBlock Text="{Binding WorkspaceLabel}" FontSize="10.5" Foreground="{StaticResource TextTertiary}"
+                                   TextTrimming="CharacterEllipsis" ToolTip="{Binding WorkspaceLabel}" Margin="0,0,0,8" />
+                        <Button Content="⚙  设置" Style="{StaticResource GhostButton}" HorizontalContentAlignment="Left"
+                                Command="{Binding OpenSettingsCommand}" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- ================= 中间会话区 ================= -->
+        <Grid Grid.Column="2" Background="{StaticResource BgLayer2}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- 顶栏:标题 + 模型选择 -->
+            <Border Grid.Row="0" Background="{StaticResource BgLayer1}" BorderBrush="{StaticResource BorderColor}"
+                    BorderThickness="0,0,0,1" Padding="16,10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Conversation.SessionTitle}" FontWeight="SemiBold" FontSize="14"
+                                   Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding Conversation.TurnStatus}" FontSize="11.5"
+                                   Foreground="{StaticResource TextSecondary}" Margin="12,0,0,0" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <ComboBox Grid.Column="1" ItemsSource="{Binding Models}" DisplayMemberPath="Name"
+                              SelectedItem="{Binding SelectedModelItem, Mode=TwoWay}" Width="200" Margin="0,0,8,0" />
+                    <ComboBox Grid.Column="2" ItemsSource="{Binding Efforts}"
+                              SelectedItem="{Binding Conversation.SelectedEffort, Mode=TwoWay}" Width="90" />
+                </Grid>
+            </Border>
+
+            <!-- 消息流 -->
+            <Grid Grid.Row="1">
+                <ScrollViewer x:Name="MessageScroll" VerticalScrollBarVisibility="Auto" Padding="0,4,0,8">
+                    <ItemsControl ItemsSource="{Binding Conversation.Items}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ContentControl Content="{Binding}" ContentTemplate="{StaticResource MessageTemplate}"
+                                                HorizontalContentAlignment="Stretch" Margin="16,2" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+
+            <!-- 输入区 -->
+            <Border Grid.Row="2" Background="{StaticResource BgLayer1}" BorderBrush="{StaticResource BorderColor}"
+                    BorderThickness="0,1,0,0" Padding="16,12">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox x:Name="InputBox" Text="{Binding Conversation.Input, UpdateSourceTrigger=PropertyChanged}"
+                             Style="{StaticResource InputBox}" MinHeight="44" MaxHeight="140"
+                             AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+                             KeyDown="InputBox_KeyDown"
+                             ToolTip="输入消息,Enter 发送,Shift+Enter 换行" />
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Bottom">
+                        <Button Content="⏹ 中断" Style="{StaticResource GhostButton}" Margin="0,0,8,0"
+                                Command="{Binding Conversation.InterruptCommand}"
+                                Visibility="{Binding Conversation.IsRunning, Converter={StaticResource BoolVisConv}}" />
+                        <Button Content="发送 ➤" Style="{StaticResource PrimaryButton}" MinWidth="84"
+                                Command="{Binding Conversation.SendCommand}"
+                                IsEnabled="{Binding Conversation.CanSend}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

@@ -1,0 +1,46 @@
+{
+  "name": "headless",
+  "patch": {
+    "source": "packages/bundle/headless/cordis.patch.yml",
+    "content": [
+      {
+        "id": "system-prompt",
+        "config": {
+          "persona": "You are a coding agent powered by the {{model}} model. Your working directory is {{cwd}}."
+        }
+      },
+      {
+        "id": "hmr",
+        "disabled": true
+      },
+      {
+        "id": "tools",
+        "config": {
+          "mode": "$js$process.env.DSH_TOOLS_MODE"
+        }
+      },
+      {
+        "insert": [
+          {
+            "id": "code-runtime",
+            "name": "@deepseek-ai/dsh-code-runtime-worker-thread"
+          },
+          {
+            "id": "headless-startup",
+            "name": "@deepseek-ai/dsh-headless/startup"
+          },
+          {
+            "id": "headless-runner",
+            "name": "@deepseek-ai/dsh-headless",
+            "inject": [
+              "headlessStartup"
+            ],
+            "config": {
+              "task": "$js$ctx.headlessStartup.task"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

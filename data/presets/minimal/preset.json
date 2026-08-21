@@ -1,0 +1,98 @@
+{
+  "name": "minimal",
+  "preset_meta": {
+    "source": "apps/cli/config/agent-presets/minimal/preset.yml",
+    "content": {
+      "name": "极简模式",
+      "description": "仅提供持久 bash 与 str_replace_editor 的双工具编码 Agent。",
+      "order": 3
+    }
+  },
+  "agent": {
+    "source": "apps/cli/config/agent-presets/minimal/agent.cordis.yml",
+    "content": [
+      {
+        "id": "persona",
+        "name": "@deepseek-ai/dsh-persona",
+        "config": {
+          "text": "You are a helpful software engineer assistant.",
+          "complete": true,
+          "includeRuntimeContext": false
+        }
+      },
+      {
+        "id": "persistent-shell",
+        "name": "cordis:group",
+        "group": true,
+        "isolate": {
+          "terminals": true
+        },
+        "config": [
+          {
+            "id": "pty",
+            "name": "@deepseek-ai/dsh-terminal"
+          },
+          {
+            "id": "terminal-bash",
+            "name": "@deepseek-ai/dsh-terminal-bash",
+            "disabled": "$js$process.platform === 'win32'",
+            "config": {
+              "timeoutMs": 300000
+            }
+          },
+          {
+            "id": "persistent-bash",
+            "name": "@deepseek-ai/dsh-tool-bash-persistent",
+            "disabled": "$js$process.platform === 'win32'",
+            "config": {
+              "timeoutMs": 300000,
+              "description": "Run commands in a bash shell\n* When invoking this tool, the contents of the \"command\" parameter does NOT need to be XML-escaped.\n* You don't have access to the internet via this tool.\n* You do have access to a mirror of common linux and python packages via apt and pip.\n* State is persistent across command calls and discussions with the user.\n* To inspect a particular line range of a file, e.g. lines 10-25, try 'sed -n 10,25p /path/to/the/file'.\n* Please avoid commands that may produce a very large amount of output.\n* Please run long lived commands in the background, e.g. 'sleep 10 &' or start a server in the background."
+            }
+          },
+          {
+            "id": "terminal-pwsh",
+            "name": "@deepseek-ai/dsh-terminal-bash",
+            "disabled": "$js$process.platform !== 'win32'",
+            "config": {
+              "shellDialect": "pwsh",
+              "timeoutMs": 300000
+            }
+          },
+          {
+            "id": "persistent-pwsh",
+            "name": "@deepseek-ai/dsh-tool-pwsh-persistent",
+            "disabled": "$js$process.platform !== 'win32'",
+            "config": {
+              "timeoutMs": 300000,
+              "description": "Run commands in a PowerShell shell\n* When invoking this tool, the contents of the \"command\" parameter does NOT need to be XML-escaped.\n* You don't have access to the internet via this tool.\n* State is persistent across command calls and discussions with the user.\n* Use native Windows paths (C:\\...) and $env:NAME variables; this is PowerShell, not bash.\n* Please avoid commands that may produce a very large amount of output.\n* Please run long lived commands in the background, e.g. 'Start-Job' or start a server with Start-Process."
+            }
+          }
+        ]
+      },
+      {
+        "id": "filesystem",
+        "name": "cordis:group",
+        "group": true,
+        "isolate": {
+          "fs": true
+        },
+        "config": [
+          {
+            "id": "fs-local",
+            "name": "@deepseek-ai/dsh-fs-local",
+            "config": {
+              "cwd": "$js$process.env.DSH_CWD ?? process.cwd()"
+            }
+          },
+          {
+            "id": "str-replace-editor",
+            "name": "@deepseek-ai/dsh-tool-str-replace-editor",
+            "config": {
+              "maxOutputChars": 16000
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

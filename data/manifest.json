@@ -1,0 +1,24 @@
+{
+  "imported_at": "2026-08-21",
+  "source_repo": "https://github.com/deepseek-ai/deepseek-harness",
+  "description": "DeepSeek Harness 参考项目数据资产(配置/preset/文档),供 WPF MVVM 重写版加载",
+  "presets": [
+    "standard",
+    "code",
+    "minimal",
+    "cordis"
+  ],
+  "bundles": [
+    "base",
+    "headless",
+    "web-app"
+  ],
+  "docs": [
+    "tool-catalog.md",
+    "config-catalog.md",
+    "persistence-catalog.md",
+    "architecture.md",
+    "agent-lifecycle.md",
+    "tool-execution-pipeline.md"
+  ]
+}
